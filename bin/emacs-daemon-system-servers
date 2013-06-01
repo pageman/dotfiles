@@ -1,0 +1,24 @@
+#!/bin/bash
+
+PIDFILE=~/var/pids/system-servers.pid
+
+usage() {
+    echo "$0 <start | stop | restart>"
+}
+
+case "$1" in
+    start)
+        `which emacs` --eval='(progn (setq server-name "system-servers") )' \
+            --daemon -q \
+            --eval="(with-temp-file \"$PIDFILE\" (insert (format \"%d\" (emacs-pid))))" \
+            --load ~/lib/system-servers.el
+        ;;
+    stop)
+        echo stopping...
+        kill -9 `cat $PIDFILE`
+        ;;
+    *)
+        usage
+        ;;
+esac
+

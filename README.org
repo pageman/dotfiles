@@ -1,0 +1,18 @@
+* Dotfiles
+  My system setup.
+
+  For now, a set up machine is a checked out copy of this repository
+  with symlinks into the appropriate locations in the checked-out
+  repository, with appropriate other files also copied into place.
+
+  see INSTALL.org for more.
+
+* still needs done
+  A Yak's beard never stops growing.
+** TODO plan a compile/distribute this dotfiles setup for easier setup
+** TODO virtualbox os x testing
+** TODO a place cloud-based place to store large files
+** TODO write a script to archive/unarchive large files.
+*** store in ~/Dropbox/Archive for now, elsewhere?
+** TODO move everything from ~/bin2 into here
+** DONE write link/setup script

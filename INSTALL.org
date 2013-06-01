@@ -1,0 +1,11 @@
+* INSTALLING
+
+For now, setting up machine is checking out the repository and
+invoking the bin/link script, which makes symbolic links in home
+directory to appropriate locations
+
+* need to get
+** firefox
+*** firebug
+*** mozrepl
+** emacs (24.2.1)

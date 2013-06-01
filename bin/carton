@@ -1,0 +1,34 @@
+#!/usr/bin/env rvm 1.9 do ruby
+# -*- mode: ruby -*-
+
+#Dir.chdir File.expand_path("~/bin")
+
+#require 'rubygems'
+#require 'bundler/setup'
+require 'main'
+
+
+Main do
+  mode 'check' do
+    def run
+      puts "running which carton... '#{`which carton`}'"
+    end
+  end
+
+  mode 'install' do
+    def run
+      puts `curl -fsSkL https://raw.github.com/rejeep/carton/master/go | sh`
+    end
+  end
+
+  def run
+    pos = ARGV.index("--")
+    args =
+      if pos
+        ARGV[pos+1..-1]
+      else
+        []
+      end
+    puts `EMACS=/Applications/Emacs.app/Contents/MacOS/Emacs ~/.carton/bin/carton #{args.join " "}`
+  end
+end

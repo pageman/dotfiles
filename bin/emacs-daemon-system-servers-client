@@ -1,0 +1,3 @@
+#!/bin/bash
+
+`which emacsclient` -s system-servers -c ~

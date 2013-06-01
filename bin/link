@@ -1,0 +1,35 @@
+#!/bin/bash
+
+
+curr_dir()
+{
+    echo `dirname ${BASH_SOURCE[0]}`;
+}
+
+expand_path()
+{
+    pushd "$1" >2 /dev/null
+    echo `pwd`
+    popd >2 /dev/null
+}
+
+
+do_link()
+{
+    echo dotfiles dir is:
+    dotfiles_dir=$(expand_path "$(curr_dir)/../");
+    echo $dotfiles_dir
+    links=(
+        bin
+        lib
+    )
+
+    for link in ${links[*]}
+    do
+        echo linking $link
+        ln -s ${dotfiles_dir}/$link ~/
+    done
+}
+
+do_link
+

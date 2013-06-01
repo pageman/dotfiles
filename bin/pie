@@ -1,0 +1,42 @@
+#!/usr/bin/env rvm 1.9 do ruby
+# -*- mode: ruby -*-
+
+
+Dir.chdir File.expand_path("~/bin")
+
+require 'rubygems'
+require 'bundler/setup'
+require 'main'
+
+class ENVReset
+  def to_s
+    "BUNDLE_GEMFILE=\"\" rvm_is_not_a_shell_function=0"
+    "BUNDLE_GEMFILE=\"\" RUBYOPT=\"\""
+  end
+end
+
+class SoloEmacs
+  def run
+    `#{ENVReset.new} /Applications/Emacs.app/Contents/MacOS/Emacs &`
+  end
+end
+
+
+Main do
+  mode 'serve' do
+
+  end
+
+  mode 'solo' do
+    def run
+      SoloEmacs.new.run
+    end
+  end
+
+  def run
+    puts "Emacs"
+  end
+
+end
+
+
