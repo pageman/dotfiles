@@ -8,9 +8,9 @@ curr_dir()
 
 expand_path()
 {
-    pushd "$1" >2 /dev/null
+    pushd "$1" &> /dev/null
     echo `pwd`
-    popd >2 /dev/null
+    popd &> /dev/null
 }
 
 
