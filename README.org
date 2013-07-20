@@ -10,9 +10,22 @@
 * still needs done
   A Yak's beard never stops growing.
 ** TODO plan a compile/distribute this dotfiles setup for easier setup
+** TODO continue moving over files from my downloads dir that were transferred from air
 ** TODO virtualbox os x testing
+*** DONE copy over VM image
+*** DONE download virtualbox
+*** TODO start experimenting with scripts
 ** TODO a place cloud-based place to store large files
 ** TODO write a script to archive/unarchive large files.
+*** TODO script started
 *** store in ~/Dropbox/Archive for now, elsewhere?
-** TODO move everything from ~/bin2 into here
+** TODO move almost everything into a vagrant vm
+*** create plan for waht needs to be moved
+**** list of things that need to be moved
+***** rvm everything
+***** homebrew
+**** list of things that need (want) to be added
+** TODO figure out
 ** DONE write link/setup script
+** DONE write link/setup script
+** DONE move everything from ~/bin2 into repo

@@ -3,13 +3,13 @@
 
 curr_dir()
 {
-    echo `dirname ${BASH_SOURCE[0]}`;
+    echo $(expand_path "$(dirname ${BASH_SOURCE[0]})");
 }
 
 expand_path()
 {
     pushd "$1" &> /dev/null
-    echo `pwd`
+    echo `pwd -P`
     popd &> /dev/null
 }
 
@@ -18,16 +18,16 @@ do_link()
 {
     echo dotfiles dir is:
     dotfiles_dir=$(expand_path "$(curr_dir)/../");
-    echo $dotfiles_dir
     links=(
         bin
         lib
+        install
     )
 
     for link in ${links[*]}
     do
-        echo linking $link
-        ln -s ${dotfiles_dir}/$link ~/
+        echo linking ${dotfiles_dir}/$link
+        ln -s ${dotfiles_dir}/$link ~/$link
     done
 }
 
