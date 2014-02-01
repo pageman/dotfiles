@@ -1,0 +1,35 @@
+#!/usr/bin/env ruby-2.0
+# -*- mode: ruby -*-
+
+# requires: gpg executable in the path (brew install gpg)
+# requires: lastpass gem (https://github.com/detunized/lastpass-ruby)
+
+require 'io/console' # for noecho
+require 'lastpass'
+
+
+# get user credentials
+print "Lastpass Email: "
+lp_email = $stdin.noecho(&:gets).strip
+puts ""
+
+print "Lastpass Password: "
+lp_password = $stdin.noecho(&:gets).strip
+puts ""
+
+puts "Connecting to lastpass... #{lp_email}, #{lp_password}"
+vault = LastPass::Vault.open_remote(lp_email, lp_password)
+
+lastpass_db_filename = "lastpass_db.gpg"
+
+
+print "Passphrase to encrypt '#{lastpass_db_filename}': "
+gpg_password = $stdin.noecho(&:gets)
+puts ""
+
+IO.popen(['gpg', '--batch', '--passphrase-fd', '0', '--output', lastpass_db_filename, '--symmetric'], 'r+') do |gpg_io|
+  gpg_io.puts gpg_password; gpg_io.puts gpg_password # enter password twice
+  vault.accounts.each do |i|
+    gpg_io.puts "#{i.name}: #{i.username}, #{i.password} (#{i.url})"
+  end
+end
