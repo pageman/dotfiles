@@ -17,7 +17,8 @@ print "Lastpass Password: "
 lp_password = $stdin.noecho(&:gets).strip
 puts ""
 
-puts "Connecting to lastpass... #{lp_email}, #{lp_password}"
+puts "Connecting to lastpass"
+
 vault = LastPass::Vault.open_remote(lp_email, lp_password)
 
 lastpass_db_filename = "lastpass_db.gpg"
