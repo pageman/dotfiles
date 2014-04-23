@@ -1,31 +1,42 @@
+#+STARTUP: showall
+
 * Dotfiles
   My system setup.
 
-  For now, a set up machine is a checked out copy of this repository
+  For now, setting up machine is checking out this repository
   with symlinks into the appropriate locations in the checked-out
   repository, with appropriate other files also copied into place.
 
-  see INSTALL.org for more.
-
-* still needs done
-  A Yak's beard never stops growing.
-** TODO plan a compile/distribute this dotfiles setup for easier setup
-** TODO continue moving over files from my downloads dir that were transferred from air
-** TODO virtualbox os x testing
-*** DONE copy over VM image
-*** DONE download virtualbox
-*** TODO start experimenting with scripts
-** TODO a place cloud-based place to store large files
-** TODO write a script to archive/unarchive large files.
-*** TODO script started
-*** store in ~/Dropbox/Archive for now, elsewhere?
-** TODO move almost everything into a vagrant vm
-*** create plan for waht needs to be moved
-**** list of things that need to be moved
-***** rvm everything
-***** homebrew
-**** list of things that need (want) to be added
-** TODO figure out
-** DONE write link/setup script
-** DONE write link/setup script
-** DONE move everything from ~/bin2 into repo
+* installation
+** requirements
+*** git
+** manual cloning and setup
+   clone the github repository
+   run the script at: src_bash{bin/link}
+** TODO plan a way to compile/distribute this dotfiles setup for easier building
+* description
+** authorization/authentication
+*** TODO create a src_bash{~/var/secrets/}
+    would act as a good central location to house sensitive
+    information e.g. passwords, etc.
+** backup system
+*** TODO create tarsnap account
+*** TODO create an s3 account
+* external things I use
+** read later
+** pinboard.in
+*** bookmarks imported from
+**** air (firefox, safar, chrome)
+**** TTM macbook pro()
+** feedly
+* TODO tools I need to add
+** omnifocus
+** firefox
+** emacs
+** git
+** ruby
+** virtualbox
+** flux
+** evernote
+* idea: create user-level service scripts
+** ~/etc/services/<service-name>
