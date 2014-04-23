@@ -1,0 +1,11 @@
+#!/usr/bin/env ruby-2.0
+
+# symlinks the ~/Downloads directory into an ~/Inbox directory
+# tries to preserve content of what was originally in ~/Downloads
+
+inbox_path = File.expand_path("~/Inbox")
+downloads_path File.expand_path("~/Downloads")
+
+Dir.mkdir inbox_path
+
+
