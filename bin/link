@@ -27,6 +27,7 @@ do_link()
     for link in ${links[*]}
     do
         echo linking ${dotfiles_dir}/$link
+        unlink ~/$link
         ln -s ${dotfiles_dir}/$link ~/$link
     done
 }
