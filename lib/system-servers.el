@@ -8,7 +8,6 @@
     (insert "~/bin/system-server")
     (comint-send-input))
 
-  (progn 
-    (shell "personal-emacs")
-    )
+  (progn
+    (shell "personal-emacs"))
   )
