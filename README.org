@@ -6,7 +6,9 @@
   For now, setting up machine is checking out this repository
   with symlinks into the appropriate locations in the checked-out
   repository, with appropriate other files also copied into place.
-
+** inbox directory
+   i use an inbox directory for all files that have not been organized
+   and categorized. 
 * installation
 ** requirements
 *** git
