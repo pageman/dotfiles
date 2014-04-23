@@ -1,4 +1,4 @@
-#!/usr/bin/env rvm 1.9 do ruby
+#!/usr/bin/env ruby-2.0
 # -*- mode: ruby -*-
 
 Dir.chdir File.expand_path("~/bin")
@@ -125,7 +125,6 @@ Main do
     puts "detecting loose ends on system..."
 
     puts "WARNING: loosends script is not done"
-    puts "see file #{plan_file}"
 
     locations.each do |location|
       to_check = case location[:type]
@@ -134,9 +133,6 @@ Main do
                  end
       to_check.check
     end
-  end
-  def plan_file
-    "~/cleanup_plan.org"
   end
   def locations
     [{
@@ -154,7 +150,11 @@ Main do
       {
         type: :git,
         at: "~/emacs/"
-      }]
+     },
+     {
+        type: :git,
+        at: "~/dotfiles/"
+     }]
   end
 end
 
