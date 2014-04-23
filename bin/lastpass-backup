@@ -8,6 +8,13 @@ require 'io/console' # for noecho
 require 'lastpass'
 
 
+
+unless ARGV.length == 1
+  puts "Error: argument missing."
+  puts "Please enter the location to save the encrypted lastpass export as first argument."
+  exit 10
+end
+
 # get user credentials
 print "Lastpass Email: "
 lp_email = $stdin.noecho(&:gets).strip
@@ -21,10 +28,9 @@ puts "Connecting to lastpass"
 
 vault = LastPass::Vault.open_remote(lp_email, lp_password)
 
-lastpass_db_filename = "lastpass_db.gpg"
+lastpass_db_filename = ARGV[0]
 
-
-print "Passphrase to encrypt '#{lastpass_db_filename}': "
+print "GPG Passphrase to encrypt export: "
 gpg_password = $stdin.noecho(&:gets)
 puts ""
 
@@ -34,3 +40,8 @@ IO.popen(['gpg', '--batch', '--passphrase-fd', '0', '--output', lastpass_db_file
     gpg_io.puts "#{i.name}: #{i.username}, #{i.password} (#{i.url})"
   end
 end
+
+
+puts "You access the export by running: "
+puts "    gpg -d #{lastpass_db_filename}"
+puts "And entering the GPG passphrase you used."
