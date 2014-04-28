@@ -8,7 +8,35 @@
   repository, with appropriate other files also copied into place.
 ** inbox directory
    i use an inbox directory for all files that have not been organized
-   and categorized. 
+   and categorized.
+** sprout-wrap
+   (out of date -- see next heading)
+   i want to phase out most of these scripts in favor of a chef based
+   solution. until i have that all figured out though:
+
+   #+begin_src bash
+   git clone git@github.com:joelmccracken/sprout-wrap.git
+   git checkout -b personal origin/personal
+   #+end_src
+
+   and then follow the readme in that repository
+** replacing sprout-wrap
+   sprout-wrap was nice, but there were a few things i didnt like
+   about it:
+
+   1. abstracting something that i thought was simple
+   2. requiring another layer to the stack that i didn't want to exist
+   3. uses yaml, etc
+
+   ultimately though the reason i have decided to move away from it is
+   that I couldn't get it to work with the chef omnibus installer --
+   some segmentation fault somewhere.
+
+   dont want to hunt it down because i am on mountain lion, not
+   mavericks, which is old
+
+   work is starting in files in the "chef" directory
+
 * installation
 ** requirements
 *** git
