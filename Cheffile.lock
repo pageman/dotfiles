@@ -1,0 +1,80 @@
+SITE
+  remote: http://community.opscode.com/api/v1
+  specs:
+    dmg (2.2.0)
+
+GIT
+  remote: git://github.com/pivotal-sprout/sprout.git
+  path: osx
+  ref: mountain-lion
+  sha: 84319f7897e00c1e892f0bde4755eb1e311abb1a
+  specs:
+    osx (0.1.0)
+
+GIT
+  remote: git://github.com/pivotal-sprout/sprout.git
+  path: pivotal_workstation
+  ref: mountain-lion
+  sha: 84319f7897e00c1e892f0bde4755eb1e311abb1a
+  specs:
+    pivotal_workstation (1.0.0)
+      dmg (>= 0.0.0)
+      osx (>= 0.0.0)
+      sprout-osx-apps (>= 0.0.0)
+      sprout-osx-base (>= 0.0.0)
+      sprout-osx-settings (>= 0.0.0)
+      sprout-pivotal (>= 0.0.0)
+
+GIT
+  remote: git://github.com/pivotal-sprout/sprout.git
+  path: sprout-osx-apps
+  ref: mountain-lion
+  sha: 84319f7897e00c1e892f0bde4755eb1e311abb1a
+  specs:
+    sprout-osx-apps (0.1.0)
+      dmg (>= 0.0.0)
+      sprout-osx-base (>= 0.0.0)
+      sprout-osx-settings (>= 0.0.0)
+
+GIT
+  remote: git://github.com/pivotal-sprout/sprout.git
+  path: sprout-osx-base
+  ref: mountain-lion
+  sha: 84319f7897e00c1e892f0bde4755eb1e311abb1a
+  specs:
+    sprout-osx-base (0.1.0)
+
+GIT
+  remote: git://github.com/pivotal-sprout/sprout.git
+  path: sprout-osx-settings
+  ref: mountain-lion
+  sha: 84319f7897e00c1e892f0bde4755eb1e311abb1a
+  specs:
+    sprout-osx-settings (0.1.0)
+      osx (>= 0.0.0)
+      sprout-osx-base (>= 0.0.0)
+
+GIT
+  remote: git://github.com/pivotal-sprout/sprout.git
+  path: sprout-pivotal
+  ref: mountain-lion
+  sha: 84319f7897e00c1e892f0bde4755eb1e311abb1a
+  specs:
+    sprout-pivotal (0.1.0)
+      dmg (>= 0.0.0)
+      sprout-osx-base (>= 0.0.0)
+
+PATH
+  remote: site-cookbooks/personal
+  specs:
+    personal (0.1.0)
+
+DEPENDENCIES
+  osx (>= 0)
+  personal (>= 0)
+  pivotal_workstation (>= 0)
+  sprout-osx-apps (>= 0)
+  sprout-osx-base (>= 0)
+  sprout-osx-settings (>= 0)
+  sprout-pivotal (>= 0)
+

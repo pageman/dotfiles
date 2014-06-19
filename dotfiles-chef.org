@@ -1,0 +1,334 @@
+#+PROPERTY: header-args :mkdirp yes
+
+#+TITLE: Personal Workstation Automation with Chef-Solo and Pivotal's Sprout
+* COMMENT meta
+** running these scripts
+   1. tangle.
+   2. run install-chef-standalone.sh
+   3. run create-personal-chef-repo.sh
+   4. run run-chef.sh
+   5. run finishing.sh
+   After the inital set up, simply tangling/and running run-chef
+   should work.
+** resetting
+   rm -rf !(dotfiles-chef.org) .*
+* Introduction
+Some of the choices I have made here might need some explaining.
+
+I have been working to automate the setup of various components of my
+system for years. When I first saw pivotal's sprout project, I was
+really happy -- Chef always seemed like it would be a great way to
+set up my system.
+
+I tried to use the recommended sprout-wrap, and it worked pretty
+well. There were some things that irked me about it, so I decided to
+try using chef solo, here.
+
+I'm basing the content of this post off of the content at
+[[http://gettingstartedwithchef.com/first-steps-with-chef.html][getting started with chef]] tutorial.
+
+For starters, I want use the chef standalone omnibus system.
+I like that it is independent of any ruby that is on my system.
+* Installing Chef's standalone ruby & supporting software
+We download the omnibus installer and run it:
+#+BEGIN_SRC sh :tangle ./install-chef-standalone.sh :shebang "#!/bin/bash"
+curl -LO https://www.opscode.com/chef/install.sh
+sudo bash install.sh
+rm -rf install.sh
+#+END_SRC
+* setting up the chef file structure
+The chef "way" seems to be that users have a directory of
+various chef files upon which their chef activies are based.
+
+I don't completely understand the rationale for this directory, but I
+think I of it as something akin to the way Rails sets up many files in a
+project structure, and all of these work together in harmony.
+
+Anyway, we need to set up this file structure. Adapted from the
+"first steps with chef" document, we create a copy of the the sample
+repository provided by opscode:
+
+
+#+NAME: clone-chef-repo
+#+BEGIN_SRC sh
+# originally was http://github.com/opscode/chef-repo/tarball/master
+# but I cloned it in case anything changes upstream
+
+curl -LO http://github.com/joelmccracken/chef-repo/tarball/master
+tar -zxf master
+
+# this would be opscode-chef-repo*
+# if you use the opscode repository
+
+mv joelmccracken-chef-repo* chef-repo
+rm master
+#+END_SRC
+
+Lets create a repository out of it:
+
+#+NAME: create-git-repo
+#+BEGIN_SRC sh
+  cd chef-repo
+  git init .
+  # this file will be deleted later anyway,
+  # but it is easier to delete it rght now
+  rm cookbooks/README.md
+  git add .
+  git commit -m 'initial import from opscode/chefrepo'
+#+END_SRC
+
+This new repository will form the basis of our system automation
+script, so lets move those files into the current directory.
+
+#+NAME: move-chef-repo-to-this-directory
+#+BEGIN_SRC sh
+  cd ../
+  cp -r chef-repo/{*,.*} .
+  rm -rf chef-repo
+#+END_SRC
+
+Knife is another peice of chef technology that we need to set up.
+It is a command-line tool that helps manage chef.
+
+Knife needs to know where to store cookbooks, because we are going to
+use it to create our first cookbook.
+
+#+BEGIN_SRC ruby :tangle ./.chef/knife.rb
+  site_cookbooks = File.expand_path(File.join File.dirname(__FILE__), "../", "site-cookbooks")
+  cookbook_path [ site_cookbooks ]
+#+END_SRC
+
+Next, we create our cookbook:
+
+#+NAME: create-personal-cookbook
+#+BEGIN_SRC sh
+  /opt/chef/bin/knife cookbook create personal
+#+END_SRC
+
+At this point, we now have a git repository in this directory, but
+there are other files that need to be taken care of.
+
+#+NAME: add-other-files-to-git
+#+BEGIN_SRC sh
+  git add .chef/knife.rb
+  git add Cheffile
+  git add create-personal-chef-repo.sh
+  git add install-chef-standalone.sh
+  git add dotfiles-chef.org
+  git add run-chef.sh
+  git add site-cookbooks
+  git add solo.json
+  git add solo.rb
+  git add finishing.sh
+
+  git commit -m 'include tangled output files'
+#+END_SRC
+
+Combine these together into a single script to be run:
+
+#+BEGIN_SRC sh :tangle ./create-personal-chef-repo.sh :shebang "#!/bin/bash" :noweb yes
+<<clone-chef-repo>>
+<<create-git-repo>>
+<<move-chef-repo-to-this-directory>>
+<<create-personal-cookbook>>
+<<add-other-files-to-git>>
+<<handle-librarian-chef>>
+#+END_SRC
+
+Now we have the necessary directory structure to work with. There is a
+noweb reference here that we will get to in the next section.
+
+* integrating librarian-chef
+So far, we have:
+
+1. chef installed
+2. a project directory to hold our recipes, cookbooks, etc.
+
+Now we can:
+3. import Chef cookbooks for our use
+4. configure which cookbooks we will run
+
+Now, we can build off of this base. To do it, we will use
+librarian-chef, a tool for managing cookbooks and cookbook versions.
+It is basically Bundler, but for cookbooks.
+
+Now we can start to think about using Pivotal's Sprout cookbooks.
+
+First, lets import
+[[https://github.com/pivotal-sprout/sprout-wrap/blob/mountain-lion/Cheffile][the Cheffile from the sprout-wrap project]].
+The Cheffile specifies which cookbooks librarian-chef should import,
+and from where.
+Notice that I am using the version from the 'mountain-lion' branch. My
+worksation is still on OS X Mountain Lion.
+
+#+BEGIN_SRC ruby :tangle ./Cheffile
+ # -*- mode: ruby -*-
+
+  site 'http://community.opscode.com/api/v1'
+
+  cookbook 'personal',
+    :path => 'site-cookbooks/personal'
+
+  cookbook 'sprout-osx-base',
+    :git => 'git://github.com/pivotal-sprout/sprout.git',
+    :ref => 'mountain-lion',
+    :path => 'sprout-osx-base'
+
+  cookbook 'pivotal_workstation',
+    :git => 'git://github.com/pivotal-sprout/sprout.git',
+    :ref => 'mountain-lion',
+    :path => 'pivotal_workstation'
+
+  cookbook 'sprout-osx-apps',
+    :git => 'git://github.com/pivotal-sprout/sprout.git',
+    :ref => 'mountain-lion',
+    :path => 'sprout-osx-apps'
+
+  cookbook 'sprout-osx-settings',
+    :git => 'git://github.com/pivotal-sprout/sprout.git',
+    :ref => 'mountain-lion',
+    :path => 'sprout-osx-settings'
+
+  cookbook 'sprout-pivotal',
+    :git => 'git://github.com/pivotal-sprout/sprout.git',
+    :ref => 'mountain-lion',
+    :path => 'sprout-pivotal'
+
+  cookbook 'osx',
+    :git => 'git://github.com/pivotal-sprout/sprout.git',
+    :ref => 'mountain-lion',
+    :path => 'osx'
+#+END_SRC
+
+You may also wish to import the Cheffile.lock (located in the same
+directory as the Cheffile).
+
+Now that we have a Cheffile, we can run librarian-chef and have it
+download the cookbooks we will use.
+
+Notice there is a 'site-cookbooks/personal' cookbook listed here. This
+is where we will be adding our own recipes.
+
+Before we move on, it should be noted that under this setup,
+librarian-chef will be managing the contents of the 'cookbooks'
+directory. So, we should add it to gitignore. Additionally,
+librarian-chef uses a tmp directory that should be ignored also.
+
+#+NAME: handle-librarian-chef
+#+BEGIN_SRC sh
+  echo -e "\ncookbooks\n" >> .gitignore
+  echo -e "tmp\n" >> .gitignore
+  git add .gitignore
+
+  git commit -m 'librarian-chef gitignores'
+#+END_SRC
+
+
+
+* the script that converges the system
+
+Before we go into anything further, we should build the script that
+will actually run chef and converge the system.
+
+First, we reset the environment. I need this because I am running RVM,
+but you might not. In any case, the environment resetting shouldn't
+hurt anything.
+
+#+NAME: reset-environment
+#+BEGIN_SRC sh
+  # necessary for the chef-version of ruby not to
+  # be confused about locations of files,
+  # at least on my system. YMMV
+  unset GEM_HOME
+  unset GEM_PATH
+
+  # make sure to put the omnibus-installed version of chef at
+  # the front of the path
+  PATH="/opt/chef/bin:/opt/chef/embedded/bin:$PATH"
+#+END_SRC
+
+The final script:
+
+#+BEGIN_SRC sh :tangle ./run-chef.sh :shebang "#!/bin/bash" :noweb yes
+  # include reset environment code
+  <<reset-environment>>
+
+  # absolute paths to executables
+  # are used to avoid problems with RVM.
+  sudo /opt/chef/embedded/bin/gem install librarian-chef
+  /opt/chef/embedded/bin/librarian-chef install --verbose
+  sudo /opt/chef/bin/chef-solo -c solo.rb -j solo.json
+#+END_SRC
+
+Notice that chef-solo gets passed two files, solo.rb and solo.json.
+We will be configuring those next.
+
+* the remaining chef files
+With chef solo, we need two files:
+- solo.rb, which provides settings for chef
+- solo.json, which provides "node attributes", which basically are
+  settings for configuring the node. For example, usernames, locations
+  of directories to place things, and recipes to run are all things
+  that should go in solo.json
+
+#+BEGIN_SRC ruby :tangle ./solo.rb
+current_dir = File.expand_path(File.dirname __FILE__)
+file_cache_path current_dir
+cookbook_path File.join current_dir, "cookbooks"
+#+END_SRC
+
+#+BEGIN_SRC js :tangle ./solo.json
+  {
+    "run_list": [
+      "recipe[sprout-osx-apps::emacs]",
+      "recipe[sprout-osx-apps::firefox]",
+      "recipe[personal]"
+    ]
+  }
+#+END_SRC
+
+To start out
+* a simple recipe
+#+BEGIN_SRC ruby :tangle ./site-cookbooks/personal/recipes/default.rb
+  #
+  # default recipe
+  #
+
+  home_dir = Dir.home(node['username'])
+
+  directory File.join(home_dir, "var") do
+    owner node['username']
+    group node['username']
+    mode "0755"
+    recursive true
+    action :create
+  end
+
+  directory File.join(home_dir, "var", "secrets") do
+    owner node['username']
+    group node['username']
+    mode "0700"
+    recursive true
+    action :create
+  end
+#+END_SRC
+
+#+BEGIN_SRC ruby :tangle ./site-cookbooks/personal/attributes/default.rb
+default['username'] = 'joel'
+#+END_SRC
+* finishing
+The final to do is to commit the Cheffile.lock
+
+#+BEGIN_SRC sh :tangle ./finishing.sh :shebang "#!/bin/bash"
+git add Cheffile.lock
+git commit -m 'cheffile.lock update'
+#+END_SRC
+
+* resources
+
+
+http://gettingstartedwithchef.com/first-steps-with-chef.html
+http://docs.opscode.com/install_omnibus.html
+http://www.getchef.com/chef/install/
+
+
