@@ -136,24 +136,32 @@ Main do
   end
   def locations
     [{
-        type: :git,
-        at: "~/apangea/"
-      },
-      {
-        type: :incoming,
-        at: "~/Downloads"
-      },
-      {
-        type: :incoming,
-        at: "~/Desktop"
-      },
-      {
-        type: :git,
-        at: "~/emacs/"
+       type: :git,
+       at: "~/vagrant-environment/apangea/"
      },
      {
-        type: :git,
-        at: "~/dotfiles/"
+       type: :git,
+       at: "~/replacement-vagrant-environment/apangea/"
+     },
+     {
+       type: :git,
+       at: "~/archived-vagrant-environment/apangea/"
+     },
+     {
+       type: :incoming,
+       at: "~/Downloads"
+     },
+     {
+       type: :incoming,
+       at: "~/Desktop"
+     },
+     {
+       type: :git,
+       at: "~/emacs/"
+     },
+     {
+       type: :git,
+       at: "~/dotfiles/"
      }]
   end
 end
