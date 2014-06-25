@@ -36,7 +36,8 @@
    mavericks, which is old
 
    work is starting in files in the "chef" directory
-
+* backups
+  backups sent to s3 for now -- jnm-private bucket
 * installation
 ** requirements
 *** git
