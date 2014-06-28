@@ -188,14 +188,13 @@ With chef solo, we need two files:
 #+END_SRC
 
 To start out
-* a simple recipe
-#+BEGIN_SRC ruby :tangle ./site-cookbooks/personal/recipes/default.rb
-  #
-  # default recipe
-  #
+* the default recipe
+this is going to get big, should modularize eventually
+** var directories
 
-  home_dir = Dir.home(node['username'])
-
+have a var, and a secrets dir so far.
+#+NAME: var-directories
+#+BEGIN_SRC ruby
   directory File.join(home_dir, "var") do
     owner node['username']
     group node['username']
@@ -212,16 +211,53 @@ To start out
     action :create
   end
 #+END_SRC
+** dotfiles/symlinks
+for now i am just replacing the old `bin/link` script
+
+#+name: dotfiles-symlinks
+#+BEGIN_SRC ruby
+  link "bin" do
+    target_file File.join(home_dir, "bin")
+    to File.join dotfiles_dir, "bin"
+    action :create
+    owner "joel"
+    group "staff"
+  end
+
+  link "lib" do
+    target_file File.join(home_dir, "lib")
+    to File.join dotfiles_dir, "lib"
+    action :create
+    owner "joel"
+    group "staff"
+  end
+
+  Dir[File.join dotfiles_dir, "profile/*"].each do |file|
+    link file do
+      target_file File.join(home_dir, file)
+      to File.join dotfiles_dir, "profile", file
+      action :create
+      owner "joel"
+      group "staff"
+    end
+  end
+#+END_SRC
+** all together
+#+BEGIN_SRC ruby :noweb yes :tangle ./site-cookbooks/personal/recipes/default.rb
+  #
+  # default recipe
+  #
+
+  home_dir = Dir.home(node['username'])
+  dotfiles_dir = File.expand_path(File.join(File.expand_path(__FILE__), "../../../../"))
+
+  <<var-directories>>
+
+  <<dotfiles-symlinks>>
+#+END_SRC
 
 #+BEGIN_SRC ruby :tangle ./site-cookbooks/personal/attributes/default.rb
 default['username'] = 'joel'
-#+END_SRC
-* finishing
-The final to do is to commit the Cheffile.lock
-
-#+BEGIN_SRC sh :tangle ./finishing.sh :shebang "#!/bin/bash"
-git add Cheffile.lock
-git commit -m 'cheffile.lock update'
 #+END_SRC
 
 * resources

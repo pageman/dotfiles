@@ -4,6 +4,7 @@
 #
 
 home_dir = Dir.home(node['username'])
+dotfiles_dir = File.expand_path(File.join(File.expand_path(__FILE__), "../../../../"))
 
 directory File.join(home_dir, "var") do
   owner node['username']
@@ -19,4 +20,30 @@ directory File.join(home_dir, "var", "secrets") do
   mode "0700"
   recursive true
   action :create
+end
+
+link "bin" do
+  target_file File.join(home_dir, "bin")
+  to File.join dotfiles_dir, "bin"
+  action :create
+  owner "joel"
+  group "staff"
+end
+
+link "lib" do
+  target_file File.join(home_dir, "lib")
+  to File.join dotfiles_dir, "lib"
+  action :create
+  owner "joel"
+  group "staff"
+end
+
+Dir[File.join dotfiles_dir, "profile/*"].each do |file|
+  link file do
+    target_file File.join(home_dir, file)
+    to File.join dotfiles_dir, "profile", file
+    action :create
+    owner "joel"
+    group "staff"
+  end
 end
