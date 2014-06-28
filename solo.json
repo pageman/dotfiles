@@ -1,8 +1,8 @@
 
 {
-  "run_list": [ 
-    "recipe[sprout-osx-apps::emacs]", 
-    "recipe[personal]",
-    "recipe[sprout-osx-apps::firefox]"
+  "run_list": [
+    "recipe[sprout-osx-apps::emacs]",
+    "recipe[sprout-osx-apps::firefox]",
+    "recipe[personal]"
   ]
 }
