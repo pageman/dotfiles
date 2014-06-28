@@ -91,12 +91,9 @@ knife configuration file:
 Cheffile:
 
 #+BEGIN_SRC ruby :tangle ./Cheffile
- # -*- mode: ruby -*-
+  # -*- mode: ruby -*-
 
   site 'http://community.opscode.com/api/v1'
-
-  cookbook 'personal',
-    :path => 'site-cookbooks/personal'
 
   cookbook 'sprout-osx-base',
     :git => 'git://github.com/pivotal-sprout/sprout.git',
@@ -174,9 +171,10 @@ With chef solo, we need two files:
   that should go in solo.json
 
 #+BEGIN_SRC ruby :tangle ./solo.rb
-current_dir = File.expand_path(File.dirname __FILE__)
-file_cache_path current_dir
-cookbook_path File.join current_dir, "cookbooks"
+  current_dir = File.expand_path(File.dirname __FILE__)
+  file_cache_path current_dir
+  cookbook_path [File.join(current_dir, "cookbooks"),
+                 File.join(current_dir, "site-cookbooks")]
 #+END_SRC
 
 #+BEGIN_SRC js :tangle ./solo.json
