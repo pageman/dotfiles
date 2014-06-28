@@ -259,6 +259,43 @@ for now i am just replacing the old `bin/link` script
 #+BEGIN_SRC ruby :tangle ./site-cookbooks/personal/attributes/default.rb
 default['username'] = 'joel'
 #+END_SRC
+* tests
+** Running tests:
+#+BEGIN_SRC sh :tangle ./run-tests.sh :shebang "#!/bin/bash" :noweb yes
+  /opt/chef/embedded/bin/ruby test/var_directories_test.rb
+#+END_SRC
+
+** Test file:
+#+BEGIN_SRC ruby :tangle ./test/var_directories_test.rb
+  require 'minitest/autorun'
+  require 'minitest/pride'
+
+  describe "directories" do
+    it "has a ~/var directory" do
+      assert dir_exists?("~/var")
+    end
+    it "has a secrets directory" do
+      assert dir_exists?("~/var/secrets")
+    end
+    it "has a secrets directory" do
+      assert dir_exists?("~/var/secrets")
+    end
+  end
+
+  describe "apps" do
+    it "has emacs" do
+      assert dir_exists?("/Applications/Emacs.app")
+    end
+
+    it "has firefox" do
+      assert dir_exists?("/Applications/Firefox.app")
+    end
+  end
+
+  def dir_exists? dir
+    Dir.exists? File.expand_path(dir)
+  end
+#+END_SRC
 
 * resources
 
