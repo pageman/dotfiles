@@ -13,10 +13,10 @@
 ** resetting
    rm -rf !(dotfiles-chef.org) .*
 * Introduction
-This is my personal automation setup.
+  This is my personal automation setup.
 
-The structure of this whole thing very largely based off of 
-the [[http://gettingstartedwithchef.com/first-steps-with-chef.html][getting started with chef]] tutorial.
+  The structure of this whole thing very largely based off of
+  the [[http://gettingstartedwithchef.com/first-steps-with-chef.html][getting started with chef]] tutorial.
 * history
 ** Installing Chef's standalone ruby & supporting software
 #+BEGIN_SRC sh
@@ -26,17 +26,17 @@ rm -rf install.sh
 #+END_SRC
 ** setting up the chef file structure
 #+BEGIN_SRC sh
-# originally was http://github.com/opscode/chef-repo/tarball/master
-# but I cloned it in case anything changes upstream
+  # originally was http://github.com/opscode/chef-repo/tarball/master
+  # but I cloned it in case anything changes upstream
 
-curl -LO http://github.com/joelmccracken/chef-repo/tarball/master
-tar -zxf master
+  curl -LO http://github.com/joelmccracken/chef-repo/tarball/master
+  tar -zxf master
 
-# this would be opscode-chef-repo*
-# if you use the opscode repository
+  # this would be opscode-chef-repo*
+  # if you use the opscode repository
 
-mv joelmccracken-chef-repo* chef-repo
-rm master
+  mv joelmccracken-chef-repo* chef-repo
+  rm master
 #+END_SRC
 #+BEGIN_SRC sh
   cd chef-repo
@@ -56,7 +56,7 @@ rm master
 #+BEGIN_SRC sh
   /opt/chef/bin/knife cookbook create personal
 #+END_SRC
-** add all these files to git 
+** add all these files to git
 #+BEGIN_SRC sh
   git add .chef/knife.rb
   git add Cheffile
