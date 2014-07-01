@@ -76,13 +76,223 @@ rm -rf install.sh
   echo -e "\ncookbooks\n" >> .gitignore
   echo -e "tmp\n" >> .gitignore
   git add .gitignore
+* Cookbooks
+  The meat of this project rests in the cookbooks.
+  The rest is just bookkeeping.
+** Personal
+** Shadow Directory
+*** Changelog
+    #+BEGIN_SRC markdown :tangle ./site-cookbooks/shadow_directory/CHANGELOG.md
+      shadow_directory CHANGELOG
+      ==========================
+
+      This file is used to list changes made in each version of the shadow_directory cookbook.
+
+      0.1.0
+      -----
+      - [Joel McCracken] - Initial release of shadow_directory
+
+    #+END_SRC
+*** Readme
+    #+BEGIN_SRC markdown :tangle ./site-cookbooks/shadow_directory/README.md
+      shadow_directory Cookbook
+      =========================
+
+      This cookbook creates a "shadow directory", which
+      is a directory is actually linked to another directory.
+
+      This is different than a simple link because it intelligently handles
+      any existing files either in the "replace" or "with" directories.
+
+      Requirements
+      ------------
+
+      Only tested on OS X, but I doubt there would be any serious issues on
+      other platforms.
+
+      Usage
+      -----
+
+      `shadow_directory` is intended to be used within another cookbook. Use
+      it like so:
+
+      ```
+      shadow_directory "Downloads -> Inbox" do
+        replace File.expand_path("~/Downloads")
+        with    File.expand_path("~/Inbox")
+      end
+      ```
+
+      Contributing
+      ------------
+
+      1. Fork the repository on Github
+      2. Create a named feature branch (like `add_component_x`)
+      3. Write your change
+      4. Write tests for your change (if applicable)
+      5. Run the tests, ensuring they all pass
+      6. Submit a Pull Request using Github
+
+      License and Authors
+      -------------------
+      Authors: Joel McCracken
+
+      MIT
+    #+END_SRC
+*** Metadata
+#+BEGIN_SRC ruby :tangle ./site-cookbooks/shadow_directory/metadata.rb
+  name             'shadow_directory'
+  maintainer       'Joel McCracken'
+  maintainer_email 'mccracken.joel@gmail.com'
+  license          'MIT'
+  description      'Configures shadow_directory on a system'
+  long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
+  version          '0.1.0'
+
+#+END_SRC
+*** Provider
+#+BEGIN_SRC ruby :tangle ./site-cookbooks/shadow_directory/providers/default.rb
+  require 'fileutils'
+
+  MAX_ITERATIONS = 1000
+  =begin
+  Shadow Directory
+
+  Replaces a directory with a link to another directory. Any contents in
+  the directory to be replaced are first moved to the other directory.
+  =end
+
+  action :install do
+    # create the replacement target if it does not exist
+    unless current_resource.with_exists?
+      converge_by "create new directory #{new_resource.with_path}" do
+        ::FileUtils.mkdir_p new_resource.with_path
+      end
+    end
+
+
+    # create replacement link if no replace currently exists
+    if current_resource.replace_is_link_to_with?
+      # nothing; this is the ideal case
+      nil
+    elsif current_resource.replace_exists?
+      handle_existing_replace
+    else
+      create_symlink
+    end
+  end
+
+  def handle_existing_replace
+    current_resource.files_in_replace.each do |file|
+      # does the file already exist at the destination? if so, we need
+      # to come up with a unique name for the file
+
+      if ::File.exists?(::File.join(current_resource.with_path, file))
+        mv_uniquely file
+      else
+        converge_by "move #{file} from #{new_resource.replace_path} to #{new_resource.with_path}" do
+          ::FileUtils.mv(::File.join(current_resource.replace_path, file),
+                         new_resource.with_path)
+        end
+      end
+    end
+
+    converge_by "Remove #{new_resource.replace_path} to make way for link to #{new_resource.with_path}" do
+      ::FileUtils.rm_r(current_resource.replace_path, :secure => true)
+    end
+
+    create_symlink
+  end
+
+  def create_symlink
+    converge_by "create link from #{new_resource.replace_path} to #{new_resource.with_path}" do
+      ::File.symlink(new_resource.with_path, new_resource.replace_path)
+    end
+  end
+
+  def mv_uniquely file
+    (0..MAX_ITERATIONS).each do |i|
+      potential_name = "#{file}.#{i}"
+      unless current_resource.file_exists_in_replace?(potential_name)
+        converge_by "move #{file} (as #{potential_name}) from #{new_resource.replace_path} to #{new_resource.with_path}" do
+          ::FileUtils.mv(::File.join(current_resource.replace_path, file),
+                         ::File.join(new_resource.with_path, potential_name))
+        end
+
+        return nil
+      end
+    end
+    raise TooManyIterationsCannotMoveFile.new "unable to move file #{file}, all potential file renamings already exist."
+  end
+
+  def load_current_resource
+    # these would have the same attributes starting out, however we will
+    # handle them differently
+    @current_resource ||= new_resource.dup
+  end
+
+  def whyrun_supported?
+    true
+  end
+
+  class TooManyIterationsCannotMoveFile < RuntimeError; end
 
   git commit -m 'librarian-chef gitignores'
 #+END_SRC
 * integrating librarian-chef
 
 knife configuration file:
+*** Resource
+#+BEGIN_SRC ruby :tangle ./site-cookbooks/shadow_directory/resources/default.rb
+  actions :install
+  default_action :install
 
+  attribute :name,    :kind_of => String, :name_attribute => true
+  attribute :replace, :kind_of => String, :required => true
+  attribute :with,    :kind_of => String, :required => true
+
+  def with_path
+    ::File.expand_path(with)
+  end
+
+  def replace_path
+    ::File.expand_path(replace)
+  end
+
+  def replace_exists?
+    ::File.exists?(replace_path)
+  end
+
+  def with_exists?
+    ::File.exists?(with_path)
+  end
+
+  def replace_empty?
+    # remove both '.' and '..'
+    Dir.new(replace_path).entries.reject(&method(:entry_is_meta)).count == 0
+  end
+
+  def replace_is_link_to_with?
+    ::File.symlink?(replace_path) and
+      ::File.readlink(replace_path) == with_path
+  end
+
+  def files_in_replace
+    ::Dir.entries(::File.join replace_path).reject(&method(:entry_is_meta))
+  end
+
+  def file_exists_in_replace?(file)
+    ::File.exists? ::File.join(with_path, file)
+  end
+
+  private
+  def entry_is_meta entry
+    entry =~ /^\.\.?$/
+  end
+
+#+END_SRC
+* Librarian-Chef
+** Knife Configuration
 #+BEGIN_SRC ruby :tangle ./.chef/knife.rb
   site_cookbooks = File.expand_path(File.join File.dirname(__FILE__), "../", "site-cookbooks")
   cookbook_path [ site_cookbooks ]
@@ -190,6 +400,19 @@ With chef solo, we need two files:
 To start out
 * the default recipe
 this is going to get big, should modularize eventually
+* My "Personal" Recipe
+Everything starts here. This is going to be getting larger, so I
+imagine I will need to modularize things a bit eventually.
+** The "Inbox" Shadow directory
+#+NAME: inbox
+#+BEGIN_SRC ruby
+  shadow_directory "Downloads -> Inbox" do
+    replace File.expand_path("~/Downloads")
+    with    File.expand_path("~/Inbox")
+  end
+
+#+END_SRC
+
 ** var directories
 
 have a var, and a secrets dir so far.

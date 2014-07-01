@@ -21,7 +21,6 @@ directory File.join(home_dir, "var", "secrets") do
   recursive true
   action :create
 end
-
 link "bin" do
   target_file File.join(home_dir, "bin")
   to File.join dotfiles_dir, "bin"
@@ -46,4 +45,9 @@ Dir[File.join dotfiles_dir, "profile/*"].each do |file|
     owner "joel"
     group "staff"
   end
+end
+
+shadow_directory "Downloads -> Inbox" do
+  replace File.expand_path("~/Downloads")
+  with    File.expand_path("~/Inbox")
 end
