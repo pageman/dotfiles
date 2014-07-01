@@ -1,17 +1,6 @@
 #+PROPERTY: header-args :mkdirp yes
 #+STARTUP: showall
-#+TITLE: Personal Workstation Automation with Chef-Solo and Pivotal's Sprout
-* COMMENT meta
-** running these scripts
-   1. tangle.
-   2. run install-chef-standalone.sh
-   3. run create-personal-chef-repo.sh
-   4. run run-chef.sh
-   5. run finishing.sh
-   After the inital set up, simply tangling/and running run-chef
-   should work.
-** resetting
-   rm -rf !(dotfiles-chef.org) .*
+#+TITLE: Joel's Personal Configuration Management Setup
 * Introduction
   This is my personal automation setup.
 
