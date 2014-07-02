@@ -1,6 +1,0 @@
-#!/usr/bin/env bash
-
-osascript -e "tell application \"Finder\"
-    activate
-    display dialog \"$1\"
-end tell"
