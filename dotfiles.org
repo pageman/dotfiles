@@ -13,58 +13,14 @@ curl -LO https://www.opscode.com/chef/install.sh
 sudo bash install.sh
 rm -rf install.sh
 #+END_SRC
-** setting up the chef file structure
-#+BEGIN_SRC sh
-  # originally was http://github.com/opscode/chef-repo/tarball/master
-  # but I cloned it in case anything changes upstream
 
-  curl -LO http://github.com/joelmccracken/chef-repo/tarball/master
-  tar -zxf master
 
-  # this would be opscode-chef-repo*
-  # if you use the opscode repository
 
-  mv joelmccracken-chef-repo* chef-repo
-  rm master
-#+END_SRC
 #+BEGIN_SRC sh
-  cd chef-repo
-  git init .
-  # this file will be deleted later anyway,
-  # but it is easier to delete it rght now
-  rm cookbooks/README.md
-  git add .
-  git commit -m 'initial import from opscode/chefrepo'
 #+END_SRC
-#+BEGIN_SRC sh
-  cd ../
-  cp -r chef-repo/{*,.*} .
-  rm -rf chef-repo
 #+END_SRC
-** create personal cookbook:
-#+BEGIN_SRC sh
-  /opt/chef/bin/knife cookbook create personal
 #+END_SRC
-** add all these files to git
-#+BEGIN_SRC sh
-  git add .chef/knife.rb
-  git add Cheffile
-  git add create-personal-chef-repo.sh
-  git add install-chef-standalone.sh
-  git add dotfiles-chef.org
-  git add run-chef.sh
-  git add site-cookbooks
-  git add solo.json
-  git add solo.rb
-  git add finishing.sh
-
-  git commit -m 'include tangled output files'
 #+END_SRC
-** adding gitignores
-#+BEGIN_SRC sh
-  echo -e "\ncookbooks\n" >> .gitignore
-  echo -e "tmp\n" >> .gitignore
-  git add .gitignore
 * Cookbooks
   The meat of this project rests in the cookbooks.
   The rest is just bookkeeping.
@@ -226,7 +182,6 @@ rm -rf install.sh
 
   class TooManyIterationsCannotMoveFile < RuntimeError; end
 
-  git commit -m 'librarian-chef gitignores'
 #+END_SRC
 * integrating librarian-chef
 
@@ -464,7 +419,6 @@ for now i am just replacing the old `bin/link` script
   dotfiles_dir = File.expand_path(File.join(File.expand_path(__FILE__), "../../../../"))
 
   <<var-directories>>
-
   <<dotfiles-symlinks>>
 #+END_SRC
 
