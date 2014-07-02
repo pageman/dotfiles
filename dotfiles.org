@@ -6,20 +6,100 @@
 
   The structure of this whole thing very largely based off of
   the [[http://gettingstartedwithchef.com/first-steps-with-chef.html][getting started with chef]] tutorial.
-* history
-** Installing Chef's standalone ruby & supporting software
+
+  The overall steps to recreate my system are:
+  0. Acquire this code.
+  1. Install chef with the omnibus installer.
+  2. Run Chef.
+  3. Restore private data (???).
+
+* Stuff that is missing
+** TODO backup story
+*** tarsnap/s3 scripted
+** TODO Firefox extension
+** TODO omnifocus
+** TODO git
+** TODO ruby
+** TODO flux
+** TODO evernote
+** TODO dropbox
+** TODO virtualbox
+** TODO vagrant
+** TODO extract shadow_directory to its own system
+* Other External Services I Use
+  I think this needs to be mentioned
+  - read later
+  - pinboard.in
+  - feedly
+* Data
+  Backups sent to s3 for now (bucket: jnm-private)
+* README.md
+
+The README is a starting point, so some basics are provided.
+
+#+BEGIN_SRC markdown :tangle ./README.md
+  # Dotfiles
+
+  Configuration management system for my (Joel McCracken) personal
+  computing setup.
+
+
+  You should see the org mode literate source for this repository at: [[dotfiles.org]]
+#+END_SRC
+* Interface executables
+  The scripts you actually will want to run.
+
+  Highlights:
+
+  - ~./bin/install-chef-standalone.sh~ installs chef via omnibus
+    installer.
+  - ~./bin/run-chef.sh~ runs chef and converges the system.
+  - ~./bin/get-cookbooks.sh~ gets cookbooks managed by librarian-chef.
+
+** Resetting environment because of RVM
+  I still use RVM. Thus, I have to occasionally deal with irritating
+  environmental issues. This bit of code sets things up for chef:
+#+NAME: reset-environment
 #+BEGIN_SRC sh
-curl -LO https://www.opscode.com/chef/install.sh
-sudo bash install.sh
-rm -rf install.sh
-#+END_SRC
+  # necessary for the chef-version of ruby not to
+  # be confused about locations of files,
+  # at least on my system. YMMV
+  unset GEM_HOME
+  unset GEM_PATH
 
+  # make sure to put the omnibus-installed version of chef at
+  # the front of the path
+  PATH="/opt/chef/bin:/opt/chef/embedded/bin:$PATH"
+#+END_SRC
+** Install Chef with Omnibus installer
+/This script is exported to ~bin/install-chef-standalone.sh~./
+#+BEGIN_SRC sh :tangle ./bin/install-chef-standalone.sh :shebang "#!/bin/bash"
+  curl -LO https://www.opscode.com/chef/install.sh
+  sudo bash install.sh
+  rm -rf install.sh
+#+END_SRC
+** Fetch Cookbooks
+#+BEGIN_SRC sh :tangle ./bin/get-cookbooks.sh :shebang "#!/bin/bash" :noweb yes
+  # include reset environment code
+  <<reset-environment>>
 
+  # absolute paths to executables
+  # are used to avoid problems with RVM.
+  sudo /opt/chef/embedded/bin/gem install librarian-chef
+  /opt/chef/embedded/bin/librarian-chef install --verbose
+#+END_SRC
+** Converge the system
+#+BEGIN_SRC sh :tangle ./run-chef.sh :shebang "#!/bin/bash" :noweb yes
+  # include reset environment code
+  <<reset-environment>>
 
-#+BEGIN_SRC sh
+  # absolute paths to executables
+  # are used to avoid problems with RVM.
+  sudo /opt/chef/bin/chef-solo -c solo.rb -j solo.json
 #+END_SRC
-#+END_SRC
-#+END_SRC
+** Running Tests
+#+BEGIN_SRC sh :tangle ./run-tests.sh :shebang "#!/bin/bash" :noweb yes
+  /opt/chef/embedded/bin/ruby test/var_directories_test.rb
 #+END_SRC
 * Cookbooks
   The meat of this project rests in the cookbooks.
@@ -183,9 +263,7 @@ rm -rf install.sh
   class TooManyIterationsCannotMoveFile < RuntimeError; end
 
 #+END_SRC
-* integrating librarian-chef
 
-knife configuration file:
 *** Resource
 #+BEGIN_SRC ruby :tangle ./site-cookbooks/shadow_directory/resources/default.rb
   actions :install
@@ -241,9 +319,7 @@ knife configuration file:
   site_cookbooks = File.expand_path(File.join File.dirname(__FILE__), "../", "site-cookbooks")
   cookbook_path [ site_cookbooks ]
 #+END_SRC
-
-Cheffile:
-
+** The Cheffile:
 #+BEGIN_SRC ruby :tangle ./Cheffile
   # -*- mode: ruby -*-
 
@@ -279,46 +355,15 @@ Cheffile:
     :ref => 'mountain-lion',
     :path => 'osx'
 #+END_SRC
-
-
-* the script that converges the system
-
-Before we go into anything further, we should build the script that
-will actually run chef and converge the system.
-
-Because RVM, the environment needs resetting.
-
-#+NAME: reset-environment
-#+BEGIN_SRC sh
-  # necessary for the chef-version of ruby not to
-  # be confused about locations of files,
-  # at least on my system. YMMV
-  unset GEM_HOME
-  unset GEM_PATH
-
-  # make sure to put the omnibus-installed version of chef at
-  # the front of the path
-  PATH="/opt/chef/bin:/opt/chef/embedded/bin:$PATH"
-#+END_SRC
-
-The final script:
-
-#+BEGIN_SRC sh :tangle ./run-chef.sh :shebang "#!/bin/bash" :noweb yes
-  # include reset environment code
-  <<reset-environment>>
-
-  # absolute paths to executables
-  # are used to avoid problems with RVM.
-  sudo /opt/chef/embedded/bin/gem install librarian-chef
-  /opt/chef/embedded/bin/librarian-chef install --verbose
-  sudo /opt/chef/bin/chef-solo -c solo.rb -j solo.json
-#+END_SRC
-
-~solo.rb~ and ~solo.json~ are defined below.
+* Chef Solo
+There are two files that need to accompany
 
 * the remaining chef files
 With chef solo, we need two files:
-- solo.rb, which provides settings for chef
+- solo.rb, which provides settings for chef. For example, it
+  specifies where files should be downloaded to, and where to find
+  cookbooks from.
+
 - solo.json, which provides "node attributes", which basically are
   settings for configuring the node. For example, usernames, locations
   of directories to place things, and recipes to run are all things
@@ -326,7 +371,7 @@ With chef solo, we need two files:
 
 #+BEGIN_SRC ruby :tangle ./solo.rb
   current_dir = File.expand_path(File.dirname __FILE__)
-  file_cache_path current_dir
+  file_cache_path ::File.join(current_dir, "tmp", "cache")
   cookbook_path [File.join(current_dir, "cookbooks"),
                  File.join(current_dir, "site-cookbooks")]
 #+END_SRC
@@ -342,8 +387,6 @@ With chef solo, we need two files:
 #+END_SRC
 
 To start out
-* the default recipe
-this is going to get big, should modularize eventually
 * My "Personal" Recipe
 Everything starts here. This is going to be getting larger, so I
 imagine I will need to modularize things a bit eventually.
@@ -408,8 +451,9 @@ for now i am just replacing the old `bin/link` script
       group "staff"
     end
   end
+
 #+END_SRC
-** all together
+** The Combined Recipe
 #+BEGIN_SRC ruby :noweb yes :tangle ./site-cookbooks/personal/recipes/default.rb
   #
   # default recipe
@@ -420,18 +464,33 @@ for now i am just replacing the old `bin/link` script
 
   <<var-directories>>
   <<dotfiles-symlinks>>
+  <<inbox>>
 #+END_SRC
 
+** Misc
 #+BEGIN_SRC ruby :tangle ./site-cookbooks/personal/attributes/default.rb
 default['username'] = 'joel'
 #+END_SRC
-* tests
-** Running tests:
-#+BEGIN_SRC sh :tangle ./run-tests.sh :shebang "#!/bin/bash" :noweb yes
-  /opt/chef/embedded/bin/ruby test/var_directories_test.rb
+
+#+BEGIN_SRC ruby :tangle ./site-cookbooks/personal/metadata.rb
+  name             'personal'
+  maintainer       'YOUR_COMPANY_NAME'
+  maintainer_email 'YOUR_EMAIL'
+  license          'All rights reserved'
+  description      'Installs/Configures personal'
+  long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
+  version          '0.1.0'
+
+
+  # externally depends upon shadow directory
+  depends "shadow_directory"
+
 #+END_SRC
 
-** Test file:
+* Tests
+These should run on a system to test to see that it is the expected
+state.
+
 #+BEGIN_SRC ruby :tangle ./test/var_directories_test.rb
   require 'minitest/autorun'
   require 'minitest/pride'
@@ -462,10 +521,25 @@ default['username'] = 'joel'
     Dir.exists? File.expand_path(dir)
   end
 #+END_SRC
+* Miscellaneous
+** ~.gitignore~
+#+BEGIN_SRC fundamental :tangle ./.gitignore
+  sprout-wrap/
+  cookbooks/
 
-* resources
+  .rake_test_cache
 
+  ###
+  # Ignore Chef key files and secrets
+  ###
+  .chef/*.pem
+  .chef/encrypted_data_bag_secret
 
+  cookbooks
+  tmp
+  chef-client-running.pid
+#+END_SRC
+* More Resources
 http://gettingstartedwithchef.com/first-steps-with-chef.html
 http://docs.opscode.com/install_omnibus.html
 http://www.getchef.com/chef/install/
