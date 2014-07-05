@@ -4,6 +4,7 @@
   "run_list": [
     "recipe[sprout-osx-apps::emacs]",
     "recipe[sprout-osx-apps::firefox]",
+    "recipe[sprout-osx-apps::flux]",
     "recipe[personal]"
   ]
 }
