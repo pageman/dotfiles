@@ -3,6 +3,7 @@
 # default recipe
 #
 
+require 'pry' # i use it all the time
 home_dir = Dir.home(node['username'])
 dotfiles_dir = File.expand_path(File.join(File.expand_path(__FILE__), "../../../../"))
 
