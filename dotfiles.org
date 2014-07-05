@@ -96,7 +96,7 @@ The README is a starting point, so some basics are provided.
   /opt/chef/embedded/bin/librarian-chef install --verbose
 #+END_SRC
 ** Converge the system
-#+BEGIN_SRC sh :tangle ./run-chef.sh :shebang "#!/bin/bash" :noweb yes
+#+BEGIN_SRC sh :tangle ./bin/run-chef.sh :shebang "#!/bin/bash" :noweb yes
   # include reset environment code
   <<reset-environment>>
 
@@ -105,7 +105,7 @@ The README is a starting point, so some basics are provided.
   sudo /opt/chef/bin/chef-solo -c solo.rb -j solo.json
 #+END_SRC
 ** Running Tests
-#+BEGIN_SRC sh :tangle ./run-tests.sh :shebang "#!/bin/bash" :noweb yes
+#+BEGIN_SRC sh :tangle ./bin/run-tests.sh :shebang "#!/bin/bash" :noweb yes
   /opt/chef/embedded/bin/ruby test/var_directories_test.rb
 #+END_SRC
 * Cookbooks
