@@ -362,11 +362,9 @@ The README is a starting point, so some basics are provided.
     :ref => 'mountain-lion',
     :path => 'osx'
 #+END_SRC
-* Chef Solo
-There are two files that need to accompany
+* Chef Solo Support Files
 
-* the remaining chef files
-With chef solo, we need two files:
+In order to use Chef solo, we need two files:
 - solo.rb, which provides settings for chef. For example, it
   specifies where files should be downloaded to, and where to find
   cookbooks from.
@@ -376,12 +374,22 @@ With chef solo, we need two files:
   of directories to place things, and recipes to run are all things
   that should go in solo.json
 
+~solo.rb~ sets a convenient file cache path and sets the cookbook path
+to ~cookbooks~, which is managed by Librarian Chef, and
+~site-cookbooks~, which are the local cookbooks:
+
 #+BEGIN_SRC ruby :tangle ./solo.rb
   current_dir = File.expand_path(File.dirname __FILE__)
   file_cache_path ::File.join(current_dir, "tmp", "cache")
   cookbook_path [File.join(current_dir, "cookbooks"),
                  File.join(current_dir, "site-cookbooks")]
 #+END_SRC
+
+
+
+~solo.json~ specifies the recipes that should be run.
+It also specifies where the firefox binary should be found, which is
+used in the ~personal~ recipe.
 
 #+BEGIN_SRC js :tangle ./solo.json
   {
@@ -393,7 +401,6 @@ With chef solo, we need two files:
   }
 #+END_SRC
 
-To start out
 * My "Personal" Recipe
 Everything starts here. This is going to be getting larger, so I
 imagine I will need to modularize things a bit eventually.
