@@ -112,6 +112,106 @@ The README is a starting point, so some basics are provided.
   The meat of this project rests in the cookbooks.
   The rest is just bookkeeping.
 ** Personal
+This is where the main action of system configuration happens.
+This is going to be getting larger, so I
+imagine I will need to modularize things a bit eventually.
+*** The "Inbox" Shadow directory
+#+NAME: inbox
+#+BEGIN_SRC ruby
+  shadow_directory "Downloads -> Inbox" do
+    replace File.expand_path("~/Downloads")
+    with    File.expand_path("~/Inbox")
+  end
+
+#+END_SRC
+
+*** var directories
+
+have a var, and a secrets dir so far.
+#+NAME: var-directories
+#+BEGIN_SRC ruby
+  directory File.join(home_dir, "var") do
+    owner node['username']
+    group node['username']
+    mode "0755"
+    recursive true
+    action :create
+  end
+
+  directory File.join(home_dir, "var", "secrets") do
+    owner node['username']
+    group node['username']
+    mode "0700"
+    recursive true
+    action :create
+  end
+#+END_SRC
+*** dotfiles/symlinks
+for now i am just replacing the old `bin/link` script
+
+#+name: dotfiles-symlinks
+#+BEGIN_SRC ruby
+  link "bin" do
+    target_file File.join(home_dir, "bin")
+    to File.join dotfiles_dir, "bin"
+    action :create
+    owner "joel"
+    group "staff"
+  end
+
+  link "lib" do
+    target_file File.join(home_dir, "lib")
+    to File.join dotfiles_dir, "lib"
+    action :create
+    owner "joel"
+    group "staff"
+  end
+
+  Dir[File.join dotfiles_dir, "profile/*"].each do |file|
+    link file do
+      target_file File.join(home_dir, file)
+      to File.join dotfiles_dir, "profile", file
+      action :create
+      owner "joel"
+      group "staff"
+    end
+  end
+
+#+END_SRC
+*** The Combined Recipe
+#+BEGIN_SRC ruby :noweb yes :tangle ./site-cookbooks/personal/recipes/default.rb
+  #
+  # default recipe
+  #
+
+  home_dir = Dir.home(node['username'])
+  dotfiles_dir = File.expand_path(File.join(File.expand_path(__FILE__), "../../../../"))
+
+  <<var-directories>>
+  <<dotfiles-symlinks>>
+  <<inbox>>
+#+END_SRC
+
+*** Misc
+#+BEGIN_SRC ruby :tangle ./site-cookbooks/personal/attributes/default.rb
+default['username'] = 'joel'
+#+END_SRC
+
+#+BEGIN_SRC ruby :tangle ./site-cookbooks/personal/metadata.rb
+  name             'personal'
+  maintainer       'YOUR_COMPANY_NAME'
+  maintainer_email 'YOUR_EMAIL'
+  license          'All rights reserved'
+  description      'Installs/Configures personal'
+  long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
+  version          '0.1.0'
+
+
+  # externally depends upon shadow directory
+  depends "shadow_directory"
+
+#+END_SRC
+
 ** Shadow Directory
 *** Changelog
     #+BEGIN_SRC markdown :tangle ./site-cookbooks/shadow_directory/CHANGELOG.md
@@ -399,106 +499,6 @@ used in the ~personal~ recipe.
       "recipe[personal]"
     ]
   }
-#+END_SRC
-
-* My "Personal" Recipe
-Everything starts here. This is going to be getting larger, so I
-imagine I will need to modularize things a bit eventually.
-** The "Inbox" Shadow directory
-#+NAME: inbox
-#+BEGIN_SRC ruby
-  shadow_directory "Downloads -> Inbox" do
-    replace File.expand_path("~/Downloads")
-    with    File.expand_path("~/Inbox")
-  end
-
-#+END_SRC
-
-** var directories
-
-have a var, and a secrets dir so far.
-#+NAME: var-directories
-#+BEGIN_SRC ruby
-  directory File.join(home_dir, "var") do
-    owner node['username']
-    group node['username']
-    mode "0755"
-    recursive true
-    action :create
-  end
-
-  directory File.join(home_dir, "var", "secrets") do
-    owner node['username']
-    group node['username']
-    mode "0700"
-    recursive true
-    action :create
-  end
-#+END_SRC
-** dotfiles/symlinks
-for now i am just replacing the old `bin/link` script
-
-#+name: dotfiles-symlinks
-#+BEGIN_SRC ruby
-  link "bin" do
-    target_file File.join(home_dir, "bin")
-    to File.join dotfiles_dir, "bin"
-    action :create
-    owner "joel"
-    group "staff"
-  end
-
-  link "lib" do
-    target_file File.join(home_dir, "lib")
-    to File.join dotfiles_dir, "lib"
-    action :create
-    owner "joel"
-    group "staff"
-  end
-
-  Dir[File.join dotfiles_dir, "profile/*"].each do |file|
-    link file do
-      target_file File.join(home_dir, file)
-      to File.join dotfiles_dir, "profile", file
-      action :create
-      owner "joel"
-      group "staff"
-    end
-  end
-
-#+END_SRC
-** The Combined Recipe
-#+BEGIN_SRC ruby :noweb yes :tangle ./site-cookbooks/personal/recipes/default.rb
-  #
-  # default recipe
-  #
-
-  home_dir = Dir.home(node['username'])
-  dotfiles_dir = File.expand_path(File.join(File.expand_path(__FILE__), "../../../../"))
-
-  <<var-directories>>
-  <<dotfiles-symlinks>>
-  <<inbox>>
-#+END_SRC
-
-** Misc
-#+BEGIN_SRC ruby :tangle ./site-cookbooks/personal/attributes/default.rb
-default['username'] = 'joel'
-#+END_SRC
-
-#+BEGIN_SRC ruby :tangle ./site-cookbooks/personal/metadata.rb
-  name             'personal'
-  maintainer       'YOUR_COMPANY_NAME'
-  maintainer_email 'YOUR_EMAIL'
-  license          'All rights reserved'
-  description      'Installs/Configures personal'
-  long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
-  version          '0.1.0'
-
-
-  # externally depends upon shadow directory
-  depends "shadow_directory"
-
 #+END_SRC
 
 * Tests
