@@ -56,7 +56,7 @@ expand_file = ->(name){
   ::File.expand_path ::File.join(__FILE__, "../../files/default", name)
 }
 
-hashed_pw = ::File.read(::File.expand_path "~/var/secrets/fx-last-pass-pw-hash")
+hashed_pw = ::File.read(::File.expand_path "~/var/secrets/fx-last-pass-pw-hash").strip
 lastpass_encoded_pw = %Q{user_pref("extensions.lastpass.loginpws", "mccracken.joel%40gmail.com=#{hashed_pw}");}
 
 personal_firefox_profile "Personal" do
