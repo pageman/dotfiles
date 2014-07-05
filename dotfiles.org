@@ -8,24 +8,31 @@
   the [[http://gettingstartedwithchef.com/first-steps-with-chef.html][getting started with chef]] tutorial.
 
   The overall steps to recreate my system are:
-  0. Acquire this code.
-  1. Install chef with the omnibus installer.
-  2. Run Chef.
-  3. Restore private data (???).
-
-* Stuff that is missing
-** TODO backup story
-*** tarsnap/s3 scripted
-** TODO Firefox extension
-** TODO omnifocus
-** TODO git
-** TODO ruby
-** TODO flux
-** TODO evernote
-** TODO dropbox
-** TODO virtualbox
-** TODO vagrant
-** TODO extract shadow_directory to its own system
+  1. Acquire this code.
+  2. Install chef with the omnibus installer.
+  3. Run Chef.
+  4. Restore private data (???).
+* Things that need to be done
+**** TODO a good backup plan
+     e.g. tarsnap/s3 backups, scripted
+**** TODO Firefox extension
+**** firebug
+**** lastpass
+**** readitlater
+**** pinboard.in bookmark
+**** mozrepl
+**** TODO omnifocus
+**** TODO git
+**** TODO ruby
+**** TODO flux
+**** TODO evernote
+**** TODO dropbox
+**** TODO virtualbox
+**** TODO vagrant
+**** TODO extract shadow_directory to its own cookbook
+**** TODO extract firefox_profile to its own cookbook
+**** TODO create a build.sh for tangling dotfiles.org
+**** TODO document any other manual things, if there are any
 * Other External Services I Use
   I think this needs to be mentioned
   - read later
