@@ -190,6 +190,46 @@ for now i am just replacing the old `bin/link` script
   end
 
 #+END_SRC
+*** Firefox Profile
+This is a piece of work I am fairly proud of. It took me a long time
+to figure out how to manually create and add extensions to a firefox
+profile.
+**** Complete Profile
+#+NAME: firefox-profile
+#+BEGIN_SRC ruby :noweb yes
+  expand_file = ->(name){
+    ::File.expand_path ::File.join(__FILE__, "../../files/default", name)
+  }
+
+  hashed_pw = ::File.read(::File.expand_path "~/var/secrets/fx-last-pass-pw-hash")
+  lastpass_encoded_pw = %Q{user_pref("extensions.lastpass.loginpws", "mccracken.joel%40gmail.com=#{hashed_pw}");}
+
+  personal_firefox_profile "Personal" do
+    owner node[:username]
+    group "staff"
+
+    location File.expand_path("~/var/FirefoxProfiles/Personal")
+
+    extensions ["mozrepl-1.1.2-fx.xpi",
+                "firebug-addon-1843-latest.xpi",
+                "lastpass-addon-8542-latest.xpi",
+                "pinboard.xpi",
+                "pocket.xpi"
+               ].map &expand_file
+
+    prefs ['user_pref("extensions.mozrepl.autoStart", true);',
+
+           #lastpass
+           'user_pref("extensions.lastpass.ffhasloggedinsuccessfully", true);',
+           'user_pref("extensions.lastpass.rememberPassword", true);',
+           'user_pref("extensions.lastpass.rememberUsername", true);',
+           lastpass_encoded_pw,
+           '"user_pref("extensions.lastpass.loginusers", "mccracken.joel%40gmail.com")',
+          ]
+
+  end
+#+END_SRC
+
 *** The Combined Recipe
 #+BEGIN_SRC ruby :noweb yes :tangle ./site-cookbooks/personal/recipes/default.rb
   #
@@ -202,6 +242,8 @@ for now i am just replacing the old `bin/link` script
   <<var-directories>>
   <<dotfiles-symlinks>>
   <<inbox>>
+  <<firefox-profile>>
+
 #+END_SRC
 
 *** Misc
@@ -570,5 +612,48 @@ state.
 http://gettingstartedwithchef.com/first-steps-with-chef.html
 http://docs.opscode.com/install_omnibus.html
 http://www.getchef.com/chef/install/
+* what i just lost
 
 
+    - create a new profile with: /Applications/Firefox.app/Contents/MacOS/firefox-bin -CreateProfile "Personal /Users/joel/var/FirefoxProfiles/Personal"
+      cd /Users/joel/var/FirefoxProfiles/Personal; chown -R joel:staff *
+    - add extension permissions to profile's prefs.jsRecipe: <Dynamically Defined Resource>
+    - install extension /Users/joel/dotfiles/site-cookbooks/personal/files/default/mozrepl-1.1.2-fx.xpi
+    - install extension /Users/joel/dotfiles/site-cookbooks/personal/files/default/firebug-addon-1843-latest.xpi
+    - install extension /Users/joel/dotfiles/site-cookbooks/personal/files/default/lastpass-addon-8542-latest.xpi
+    - install extension /Users/joel/dotfiles/site-cookbooks/personal/files/default/pinboard.xpi
+    - install extension /Users/joel/dotfiles/site-cookbooks/personal/files/default/pocket.xpi
+    - briefly run firefox to have it set up the newly-created profile
+    - ensure prefs.js contains 'user_pref("extensions.mozrepl.autoStart", true);'
+    - ensure prefs.js contains 'user_pref("extensions.lastpass.ffhasloggedinsuccessfully", true);'
+    - ensure prefs.js contains 'user_pref("extensions.lastpass.rememberPassword", true);'
+    - ensure prefs.js contains 'user_pref("extensions.lastpass.rememberUsername", true);'
+    - ensure prefs.js contains 'user_pref("extensions.lastpass.loginpws", "mccracken.joel%40gmail.com=%2FVd09KsihutZ%2FpUoSe5L8fGdeaWope%2BYs%2BrD9FUE1bs%3D");'
+    - ensure prefs.js contains 'user_pref("extensions.lastpass.loginusers", "mccracken.joel%40gmail.com")'
+
+
+
+ 67: personal_firefox_profile "Personal" do
+ 68:   owner node[:username]
+ 69:   group "staff"
+ 70:
+ 71:   location File.expand_path("~/var/FirefoxProfiles/Personal")
+ 72:   extensions ["mozrepl-1.1.2-fx.xpi",
+ 73:               "firebug-addon-1843-latest.xpi",
+ 74:               "lastpass-addon-8542-latest.xpi",
+ 75:               "pinboard.xpi",
+ 76:               "pocket.xpi"
+ 77:              ].map &expand_file
+ 78:
+ 79:   prefs ['user_pref("extensions.mozrepl.autoStart", true);',
+ 80:
+ 81:          #lastpass
+ 82:          'user_pref("extensions.lastpass.ffhasloggedinsuccessfully", true);',
+ 83:          'user_pref("extensions.lastpass.rememberPassword", true);',
+ 84:          'user_pref("extensions.lastpass.rememberUsername", true);',
+ 85:          %Q{user_pref("extensions.lastpass.loginpws", "mccracken.joel%40gmail.com=#{ENV['LASTP
+ASSPWHASH']}");},
+ 86:          '"user_pref("extensions.lastpass.loginusers", "mccracken.joel%40gmail.com")',
+ 87:         ]
+ 88: end
+ 89:
