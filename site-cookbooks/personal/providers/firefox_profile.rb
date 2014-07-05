@@ -88,8 +88,8 @@ def file_edit_ensure_line file_edit, string
 end
 
 def install_extension extension
-  unless new_resource.extension_exists? extension
-    installed_name = installed_xpi_name extension
+  installed_name = installed_xpi_name extension
+  unless new_resource.extension_exists? installed_name
     converge_by "install extension #{extension}" do
       extension_location = "#{new_resource.location}/extensions/"
       FileUtils.mkdir_p extension_location
