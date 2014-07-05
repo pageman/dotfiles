@@ -30,8 +30,9 @@ action :install do
     new_resource.extensions.each do |extension|
       install_extension extension
     end
-    open_firefox_briefly
   end
+
+  run_firefox_if_needed
 
   unless new_resource.prefs.empty?
     file_edit = Chef::Util::FileEdit.new prefsjs_file
@@ -62,14 +63,21 @@ def prefsjs_file
 end
 
 
+def firefox_needs_run!
+  @firefox_needs_run = true
+end
+
+
 # Firefox does some fancy work that seems important here.
 # I don't know precisely what it is, but doing this in various places
 # tends to eliciit different results.
-def open_firefox_briefly
-  converge_by "briefly run firefox to have it set up the newly-created profile" do
-    pipe = IO.popen [node[:firefox_bin], "-P", new_resource.profile_name]
-    sleep 5
-    Process.kill 9, pipe.pid
+def run_firefox_if_needed
+  if @firefox_needs_run
+    converge_by "briefly run firefox to have it set up the newly-created profile" do
+      pipe = IO.popen [node[:firefox_bin], "-P", new_resource.profile_name]
+      sleep 5
+      Process.kill 9, pipe.pid
+    end
   end
 end
 
@@ -95,6 +103,7 @@ def install_extension extension
       FileUtils.mkdir_p extension_location
       FileUtils.cp extension, ::File.join(extension_location, installed_name)
     end
+    firefox_needs_run!
   end
 end
 
