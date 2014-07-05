@@ -13,6 +13,13 @@
   3. Run Chef.
   4. Restore private data (???).
 * Things that need to be done
+**** TODO add a "chef-env" script that runs other scripts in the chef reset environment
+     e.g. something like
+     set all the env vars
+     set path
+     exec "$@"
+     etc
+     note: in bash bypass rvm gem function with 'command' builtin
 **** TODO a good backup plan
      e.g. tarsnap/s3 backups, scripted
 **** TODO Firefox extension
