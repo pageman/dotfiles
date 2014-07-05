@@ -493,6 +493,7 @@ used in the ~personal~ recipe.
 
 #+BEGIN_SRC js :tangle ./solo.json
   {
+    "firefox_bin": "/Applications/Firefox.app/Contents/MacOS/firefox-bin",
     "run_list": [
       "recipe[sprout-osx-apps::emacs]",
       "recipe[sprout-osx-apps::firefox]",
