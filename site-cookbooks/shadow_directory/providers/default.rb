@@ -9,6 +9,8 @@ Replaces a directory with a link to another directory. Any contents in
 the directory to be replaced are first moved to the other directory.
 =end
 
+include Chef::Mixin::ShellOut
+
 action :install do
   # create the replacement target if it does not exist
   unless current_resource.with_exists?
@@ -16,7 +18,6 @@ action :install do
       ::FileUtils.mkdir_p new_resource.with_path
     end
   end
-
 
   # create replacement link if no replace currently exists
   if current_resource.replace_is_link_to_with?
@@ -26,6 +27,18 @@ action :install do
     handle_existing_replace
   else
     create_symlink
+  end
+
+
+  if new_resource.owner
+    ownership = [new_resource.owner, new_resource.group].compact.join ":"
+    converge_by "set profile ownership to #{ownership}" do
+      cmd = <<-FX_CMD.strip
+        sudo chown -R #{ownership} #{new_resource.with_path}
+      FX_CMD
+
+      shell_out!(cmd, user: new_resource.owner)
+    end
   end
 end
 

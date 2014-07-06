@@ -24,6 +24,8 @@ it like so:
 shadow_directory "Downloads -> Inbox" do
   replace File.expand_path("~/Downloads")
   with    File.expand_path("~/Inbox")
+  owner   "johnny"
+  group   "cache"
 end
 ```
 

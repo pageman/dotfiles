@@ -5,6 +5,8 @@ default_action :install
 attribute :name,    :kind_of => String, :name_attribute => true
 attribute :replace, :kind_of => String, :required => true
 attribute :with,    :kind_of => String, :required => true
+attribute :owner,   :kind_of => String
+attribute :group,   :kind_of => String
 
 def with_path
   ::File.expand_path(with)

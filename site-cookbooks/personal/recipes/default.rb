@@ -51,6 +51,8 @@ end
 shadow_directory "Downloads -> Inbox" do
   replace File.expand_path("~/Downloads")
   with    File.expand_path("~/Inbox")
+  owner   node[:username]
+  group   "staff"
 end
 
 expand_file = ->(name){

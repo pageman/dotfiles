@@ -126,6 +126,8 @@ This piece should:
   shadow_directory "Downloads -> Inbox" do
     replace File.expand_path("~/Downloads")
     with    File.expand_path("~/Inbox")
+    owner   node[:username]
+    group   "staff"
   end
 
 #+END_SRC
@@ -478,6 +480,8 @@ default['username'] = 'joel'
       shadow_directory "Downloads -> Inbox" do
         replace File.expand_path("~/Downloads")
         with    File.expand_path("~/Inbox")
+        owner   "johnny"
+        group   "cache"
       end
       ```
 
@@ -520,6 +524,8 @@ default['username'] = 'joel'
   the directory to be replaced are first moved to the other directory.
   =end
 
+  include Chef::Mixin::ShellOut
+
   action :install do
     # create the replacement target if it does not exist
     unless current_resource.with_exists?
@@ -527,7 +533,6 @@ default['username'] = 'joel'
         ::FileUtils.mkdir_p new_resource.with_path
       end
     end
-
 
     # create replacement link if no replace currently exists
     if current_resource.replace_is_link_to_with?
@@ -537,6 +542,18 @@ default['username'] = 'joel'
       handle_existing_replace
     else
       create_symlink
+    end
+
+
+    if new_resource.owner
+      ownership = [new_resource.owner, new_resource.group].compact.join ":"
+      converge_by "set profile ownership to #{ownership}" do
+        cmd = <<-FX_CMD.strip
+          sudo chown -R #{ownership} #{new_resource.with_path}
+        FX_CMD
+
+        shell_out!(cmd, user: new_resource.owner)
+      end
     end
   end
 
@@ -605,6 +622,8 @@ default['username'] = 'joel'
   attribute :name,    :kind_of => String, :name_attribute => true
   attribute :replace, :kind_of => String, :required => true
   attribute :with,    :kind_of => String, :required => true
+  attribute :owner,   :kind_of => String
+  attribute :group,   :kind_of => String
 
   def with_path
     ::File.expand_path(with)
