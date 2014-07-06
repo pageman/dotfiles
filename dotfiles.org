@@ -22,16 +22,9 @@
      note: in bash bypass rvm gem function with 'command' builtin
 **** TODO a good backup plan
      e.g. tarsnap/s3 backups, scripted
-**** TODO Firefox extension
-**** firebug
-**** lastpass
-**** readitlater
-**** pinboard.in bookmark
-**** mozrepl
 **** TODO omnifocus
 **** TODO git
 **** TODO ruby
-**** TODO flux
 **** TODO evernote
 **** TODO dropbox
 **** TODO virtualbox
