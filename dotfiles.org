@@ -303,7 +303,7 @@ The file ~site-cookbooks/personal/providers/firefox_profile.rb~:
       converge_by "set profile ownership to #{ownership}" do
         cmd = <<-FX_CMD.strip
           cd #{new_resource.location}
-          sudo chown -R #{ownership} *
+          chown -R #{ownership} *
         FX_CMD
 
         shell_out!(cmd, user: new_resource.owner)
@@ -549,7 +549,7 @@ default['username'] = 'joel'
       ownership = [new_resource.owner, new_resource.group].compact.join ":"
       converge_by "set profile ownership to #{ownership}" do
         cmd = <<-FX_CMD.strip
-          sudo chown -R #{ownership} #{new_resource.with_path}
+          chown -R #{ownership} #{new_resource.with_path}
         FX_CMD
 
         shell_out!(cmd, user: new_resource.owner)
