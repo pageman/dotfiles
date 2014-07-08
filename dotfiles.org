@@ -23,8 +23,6 @@
 **** TODO a good backup plan
      e.g. tarsnap/s3 backups, scripted
 **** TODO omnifocus
-**** TODO git
-**** TODO ruby
 **** TODO evernote
 **** TODO dropbox
 **** TODO virtualbox
@@ -132,8 +130,7 @@ This piece should:
 
 #+END_SRC
 
-*** var directories
-
+*** ~\~/var~ directories
 have a var, and a secrets dir so far.
 #+NAME: var-directories
 #+BEGIN_SRC ruby
@@ -402,7 +399,12 @@ The file ~site-cookbooks/personal/providers/firefox_profile.rb~:
   end
 
 #+END_SRC
-
+*** Miscellaneous Software
+#+name: misc-software
+#+BEGIN_SRC ruby
+  brew "ruby20"
+  brew "git"
+#+END_SRC
 *** The Combined Recipe
 #+BEGIN_SRC ruby :noweb yes :tangle ./site-cookbooks/personal/recipes/default.rb
   #
@@ -417,7 +419,7 @@ The file ~site-cookbooks/personal/providers/firefox_profile.rb~:
   <<dotfiles-symlinks>>
   <<inbox>>
   <<firefox-profile>>
-
+  <<misc-software>>
 #+END_SRC
 
 *** Misc
@@ -435,9 +437,8 @@ default['username'] = 'joel'
   version          '0.1.0'
 
 
-  # externally depends upon shadow directory
   depends "shadow_directory"
-
+  depends "sprout-osx-base"
 #+END_SRC
 
 ** Shadow Directory
