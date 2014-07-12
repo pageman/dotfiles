@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-rvm ruby-2.0.0-p247 do ruby "$@"
+/usr/local/Cellar/ruby20/2.0.0-p481/bin/ruby "$@"
