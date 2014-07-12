@@ -11,13 +11,14 @@
   3. Run Chef.
   4. Restore private data (???).
 * Things that need to be done
-**** TODO add a "chef-env" script that runs other scripts in the chef reset environment
-     e.g. something like
-     set all the env vars
-     set path
-     exec "$@"
-     etc
-     note: in bash bypass rvm gem function with 'command' builtin
+**** TODO determine if rvm hacks are still necessary 
+***** if so: add a "chef-env" script that runs other scripts in the chef reset environment
+      e.g. something like
+      set all the env vars
+      set path
+      exec "$@"
+      etc
+      (old) note: in bash bypass rvm gem function with 'command' builtin
 **** TODO a good backup plan
      e.g. tarsnap/s3 backups, scripted
 **** TODO omnifocus
@@ -46,7 +47,7 @@ The README is a starting point, so some basics are provided.
   Configuration management system for my (Joel McCracken) personal
   computing setup.
 
-  You should see the org mode literate source for this repository at: [dotfiles.org](./dotfiles.org)
+  For more information, see [dotfiles.org](./dotfiles.org)
 #+END_SRC
 * Interface executables
   The scripts you actually will want to run.
