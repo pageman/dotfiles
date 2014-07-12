@@ -2,12 +2,10 @@
 #+STARTUP: showall
 #+TITLE: Joel's Personal Configuration Management Setup
 * Introduction
-  This is my personal automation setup.
+  This project contains the code and resources to set up and configure
+  a workstation in the way I want it.
 
-  The structure of this whole thing very largely based off of
-  the [[http://gettingstartedwithchef.com/first-steps-with-chef.html][getting started with chef]] tutorial.
-
-  The overall steps to recreate my system are:
+  The overall steps to configure a system:
   1. Acquire this code.
   2. Install chef with the omnibus installer.
   3. Run Chef.
@@ -47,7 +45,6 @@ The README is a starting point, so some basics are provided.
 
   Configuration management system for my (Joel McCracken) personal
   computing setup.
-
 
   You should see the org mode literate source for this repository at: [dotfiles.org](./dotfiles.org)
 #+END_SRC
