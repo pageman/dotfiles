@@ -10,8 +10,35 @@
   2. Install chef with the omnibus installer.
   3. Run Chef.
   4. Restore private data (???).
+* Problem: need to install gcc/xcode tools
+  I tried a few things:
+  first of all, i tried to download the dmg from apple's site
+  that proved to be really hard.
+
+  I also tried  using the ~xcode-select --install~ command. this was a
+  problem because it requires UI interaction, and afaict there was no
+  good way to fix this
+
+  now, I am hosting the dmg on my own server.
+* notes for setting up "pre/initial" base VM image
+
+~systemsetup -setremotelogin on~ turns on ssh
+https://discussions.apple.com/message/9191821
+
+ssh from host to guest
+https://discussions.apple.com/message/9191821
+
+for networking, use nat, forward port 3333 -> 22, can ssh via
+~ssh -p 3333 testuser@localhost~
+VBoxManage modifyvm "VM name" --natpf1 "guestssh,tcp,,2222,,22"
+
+* Notes from first run in VM
+** permissions got out of wack
+** should move gem installation to the process of installing chef
+** gcc wasn't installed by default -- would really like to script that.
+** need to move private data into place, esp last password pw hashed
 * Things that need to be done
-**** TODO determine if rvm hacks are still necessary 
+**** TODO determine if rvm hacks are still necessary
 ***** if so: add a "chef-env" script that runs other scripts in the chef reset environment
       e.g. something like
       set all the env vars
@@ -26,6 +53,7 @@
 **** TODO dropbox
 **** TODO virtualbox
 **** TODO vagrant
+**** TODO move installation of librarian chef gem to installation of chef
 **** TODO extract shadow_directory to its own cookbook
 **** TODO extract firefox_profile to its own cookbook
 **** TODO create a build.sh for tangling dotfiles.org
@@ -50,14 +78,14 @@ The README is a starting point, so some basics are provided.
   For more information, see [dotfiles.org](./dotfiles.org)
 #+END_SRC
 * Interface executables
-  The scripts you actually will want to run.
+  Executable scripts to run various components related to chef:
 
   Highlights:
 
   - ~./bin/install-chef-standalone.sh~ installs chef via omnibus
     installer.
-  - ~./bin/run-chef.sh~ runs chef and converges the system.
   - ~./bin/get-cookbooks.sh~ gets cookbooks managed by librarian-chef.
+  - ~./bin/run-chef.sh~ runs chef and converges the system.
 
 ** Resetting environment because of RVM
   I still use RVM. Thus, I have to occasionally deal with irritating
