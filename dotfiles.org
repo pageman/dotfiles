@@ -218,6 +218,18 @@ The README is a starting point, so some basics are provided.
   # the front of the path
   PATH="/opt/chef/bin:/opt/chef/embedded/bin:$PATH"
 #+END_SRC
+
+** chef-run script
+This is an experimental script. I hope it will make it easier to use
+the embedded chef.
+
+#+BEGIN_SRC sh :tangle ./bin/chef-env-run.sh :shebang "#!/bin/bash" :noweb yes
+  <<reset-environment>>
+
+  exec "$@"
+#+END_SRC
+
+
 ** Install Chef with Omnibus installer
 /This script is exported to ~bin/install-chef-standalone.sh~./
 #+BEGIN_SRC sh :tangle ./bin/install-chef-standalone.sh :shebang "#!/bin/bash"
