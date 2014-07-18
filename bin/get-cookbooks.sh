@@ -13,5 +13,4 @@ PATH="/opt/chef/bin:/opt/chef/embedded/bin:$PATH"
 
 # absolute paths to executables
 # are used to avoid problems with RVM.
-sudo /opt/chef/embedded/bin/gem install librarian-chef
 /opt/chef/embedded/bin/librarian-chef install --verbose

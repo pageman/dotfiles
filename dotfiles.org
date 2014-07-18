@@ -229,13 +229,16 @@ the embedded chef.
   exec "$@"
 #+END_SRC
 
-
 ** Install Chef with Omnibus installer
 /This script is exported to ~bin/install-chef-standalone.sh~./
 #+BEGIN_SRC sh :tangle ./bin/install-chef-standalone.sh :shebang "#!/bin/bash"
   curl -LO https://www.opscode.com/chef/install.sh
   sudo bash install.sh
   rm -rf install.sh
+  sudo chown joel:staff -R /opt/chef
+  /opt/chef/embedded/bin/gem install librarian-chef
+  /opt/chef/embedded/bin/gem install knife-solo
+  /opt/chef/embedded/bin/gem install knife-solo_data_bag
 #+END_SRC
 ** Fetch Cookbooks
 #+BEGIN_SRC sh :tangle ./bin/get-cookbooks.sh :shebang "#!/bin/bash" :noweb yes
@@ -244,7 +247,6 @@ the embedded chef.
 
   # absolute paths to executables
   # are used to avoid problems with RVM.
-  sudo /opt/chef/embedded/bin/gem install librarian-chef
   /opt/chef/embedded/bin/librarian-chef install --verbose
 #+END_SRC
 ** Converge the system
