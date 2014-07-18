@@ -21,16 +21,15 @@
 
   now, I am hosting the dmg on my own server.
 * notes for setting up "pre/initial" base VM image
-
-~systemsetup -setremotelogin on~ turns on ssh
-https://discussions.apple.com/message/9191821
-
-ssh from host to guest
-https://discussions.apple.com/message/9191821
-
-for networking, use nat, forward port 3333 -> 22, can ssh via
-~ssh -p 3333 testuser@localhost~
-VBoxManage modifyvm "Mavericks" --natpf1 "guestssh,tcp,,3333,,22"
+- ~systemsetup -setremotelogin on~ turns on ssh
+  https://discussions.apple.com/message/9191821
+- ssh from host to guest:
+  https://discussions.apple.com/message/9191821
+- for networking, use nat, forward port 3333 -> 22, can ssh via ~ssh -p 3333 testuser@localhost~
+- set networking with
+#+BEGIN_SRC
+ VBoxManage modifyvm "Mavericks" --natpf1 "guestssh,tcp,,3333,,22"
+#+END_SRC
 * How to prepare a VM for testing
 
 I would love to make this entire process automated, but I don't think
@@ -39,6 +38,9 @@ that is possible.
 ** Create a bootable ISO
 These instructions come from [[http://thezinx.com/misc/trend/create-bootable-dmg-iso-mavericks-app/][here]], but I am copying them below in case
 that source ever goes away.
+
+Before all this, you must acquire the "Install OS X Mavericks.app"
+installer.
 #+BEGIN_QUOTE
 # Mount the installer image
 hdiutil attach /Applications/Install\ OS\ X\ Mavericks.app/Contents/SharedSupport/InstallESD.dmg -noverify -nobrowse -mountpoint /Volumes/install_app
@@ -82,10 +84,15 @@ want to tweak ram, etc.
 
 Go through the setup process, etc. Give the user account a
 username/password like "testuser"/"testuser".
+
+Finally, log into the VM desktop. Set your keyboard if it prompts you,
+open terminal, and run: ~systemsetup -setremotelogin on~.
+
+This command enables ssh: we can now ssh into this VM!
 ** Export the VM
 At this point, you should have an out-of-the-box OS VM that boots
-to Mavericks desktop. Export it so you can re-import it if something
-goes wrong.
+to Mavericks desktop and allows you to ssh into it. Export it so you
+can re-import it if something goes wrong.
 
 You can export with the UI, but hey, lets do it with the VBoxManage
 command:
@@ -101,34 +108,25 @@ tar cvf mavericks-base-ssh-enabled.ova mavericks-base-ssh-enabled.ovf mavericks-
 This creates an ova file out of the ovf and the vmdk files. Notice,
 the ovf file must come first in the list.
 
-** Re-import the VM
-At this point, you don't actually need to do this, but if you want to
-re-create from the previous point, here's how:
+** Re-importing the VM
+If you ever need to re-import the vm image we just created, here's how:
 
-First, run the command with --dry-run
+First, run this the command with --dry-run
 #+BEGIN_SRC
-VBoxManage import ~/Documents/mavericks-base.ova --dry-run
+VBoxManage import ~/Documents/wherever-you-put-the-vm.ova --dry-run
 #+END_SRC
 
 If all is well with what it detected, then run it again without
 ~--dry-run~. See the VirtualBox documentation about VBoxManage.
 ** Delete a VM
+If you need to delete a VM currently in VirtualBox:
 #+BEGIN_SRC
 VBoxManage unregistervm mavericks-vm-name-here --delete
 #+END_SRC
-** Export the VM part two
-going to try to do one thing in the vm:
-~systemsetup -setremotelogin on~
-Then re-export.
 
-also set the keyboard, but not interested in that.
-** Setup the VM for testing purposes
-All I really want to do is enable ssh on the VM so I can
-easily access it: ~systemsetup -setremotelogin on~ from the command
-line on the guest will do it.
-
+** Port Forwarding for SSH
 In order to access this VM over ssh, we need to set up port
-forwarding. Running this from the host will enable that.
+forwarding. Running this from the host will enable that:
 
 #+BEGIN_SRC
 VBoxManage modifyvm "Mavericks" --natpf1 "guestssh,tcp,,3333,,22"
@@ -139,13 +137,16 @@ Now you can ssh into the vm with:
 #+BEGIN_SRC
 ssh -p 3333 testuser@localhost
 #+END_SRC
-** add non-strict host checking
-   ON my host, I have a problem with the above ssh line because keys
-   have changed. In order to get around this, an alternative version
-   looks like:
+
+After you do this a few times, you might run into host key
+problems. Just do this:
+
  #+BEGIN_SRC
 ssh -o "StrictHostKeyChecking no" -o "UserKnownHostsFile /dev/null" -o "PasswordAuthentication yes" -p 3333 testuser@localhost
  #+END_SRC
+
+At some point in the future I would like to make this easier, maybe
+with a settings file.
 * Notes from first run in VM
 ** permissions got out of wack
 ** should move gem installation to the process of installing chef
