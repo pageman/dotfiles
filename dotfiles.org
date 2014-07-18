@@ -30,8 +30,122 @@ https://discussions.apple.com/message/9191821
 
 for networking, use nat, forward port 3333 -> 22, can ssh via
 ~ssh -p 3333 testuser@localhost~
-VBoxManage modifyvm "VM name" --natpf1 "guestssh,tcp,,2222,,22"
+VBoxManage modifyvm "Mavericks" --natpf1 "guestssh,tcp,,3333,,22"
+* How to prepare a VM for testing
 
+I would love to make this entire process automated, but I don't think
+that is possible.
+
+** Create a bootable ISO
+These instructions come from [[http://thezinx.com/misc/trend/create-bootable-dmg-iso-mavericks-app/][here]], but I am copying them below in case
+that source ever goes away.
+#+BEGIN_QUOTE
+# Mount the installer image
+hdiutil attach /Applications/Install\ OS\ X\ Mavericks.app/Contents/SharedSupport/InstallESD.dmg -noverify -nobrowse -mountpoint /Volumes/install_app
+
+# Convert the boot image to a sparse bundle
+hdiutil convert /Volumes/install_app/BaseSystem.dmg -format UDSP -o /tmp/Mavericks
+
+# Increase the sparse bundle capacity to accommodate the packages
+hdiutil resize -size 8g /tmp/Mavericks.sparseimage
+
+# Mount the sparse bundle for package addition
+hdiutil attach /tmp/Mavericks.sparseimage -noverify -nobrowse -mountpoint /Volumes/install_build
+
+# Remove Package link and replace with actual files
+rm /Volumes/install_build/System/Installation/Packages
+cp -rp /Volumes/install_app/Packages /Volumes/install_build/System/Installation/
+
+# Unmount the installer image
+hdiutil detach /Volumes/install_app
+
+# Unmount the sparse bundle
+hdiutil detach /Volumes/install_build
+
+# Resize the partition in the sparse bundle to remove any free space
+hdiutil resize -size `hdiutil resize -limits /tmp/Mavericks.sparseimage | tail -n 1 | awk '{ print $1 }'`b /tmp/Mavericks.sparseimage
+
+# Convert the sparse bundle to ISO/CD master
+hdiutil convert /tmp/Mavericks.sparseimage -format UDTO -o /tmp/Mavericks
+
+# Remove the sparse bundle
+rm /tmp/Mavericks.sparseimage
+
+# Rename the ISO and move it to the desktop
+mv /tmp/Mavericks.cdr ~/Desktop/Mavericks.iso
+#+END_QUOTE
+** Create a new VM in Virtualbox
+There is a [[https://www.youtube.com/watch?v=3kKDf-E5AiQ][source on youtube]], but the idea is: In Virtualbox, specify
+a new VM with osx 10.9/Mavericks as the type. Use all the defaults it
+provides you, at least at first. Once you have it working, you may
+want to tweak ram, etc.
+
+Go through the setup process, etc. Give the user account a
+username/password like "testuser"/"testuser".
+** Export the VM
+At this point, you should have an out-of-the-box OS VM that boots
+to Mavericks desktop. Export it so you can re-import it if something
+goes wrong.
+
+You can export with the UI, but hey, lets do it with the VBoxManage
+command:
+#+BEGIN_SRC
+VBoxManage export your-mavericks-vm-name-here -o ~/Documents/mavericks-base-ssh-enabled.ovf
+#+END_SRC
+
+The resulting files may be bundled together like so:
+
+#+BEGIN_SRC
+tar cvf mavericks-base-ssh-enabled.ova mavericks-base-ssh-enabled.ovf mavericks-base-ssh-enabled-disk1.vmdk
+#+END_SRC
+This creates an ova file out of the ovf and the vmdk files. Notice,
+the ovf file must come first in the list.
+
+** Re-import the VM
+At this point, you don't actually need to do this, but if you want to
+re-create from the previous point, here's how:
+
+First, run the command with --dry-run
+#+BEGIN_SRC
+VBoxManage import ~/Documents/mavericks-base.ova --dry-run
+#+END_SRC
+
+If all is well with what it detected, then run it again without
+~--dry-run~. See the VirtualBox documentation about VBoxManage.
+** Delete a VM
+#+BEGIN_SRC
+VBoxManage unregistervm mavericks-vm-name-here --delete
+#+END_SRC
+** Export the VM part two
+going to try to do one thing in the vm:
+~systemsetup -setremotelogin on~
+Then re-export.
+
+also set the keyboard, but not interested in that.
+** Setup the VM for testing purposes
+All I really want to do is enable ssh on the VM so I can
+easily access it: ~systemsetup -setremotelogin on~ from the command
+line on the guest will do it.
+
+In order to access this VM over ssh, we need to set up port
+forwarding. Running this from the host will enable that.
+
+#+BEGIN_SRC
+VBoxManage modifyvm "Mavericks" --natpf1 "guestssh,tcp,,3333,,22"
+#+END_SRC
+
+Now you can ssh into the vm with:
+
+#+BEGIN_SRC
+ssh -p 3333 testuser@localhost
+#+END_SRC
+** add non-strict host checking
+   ON my host, I have a problem with the above ssh line because keys
+   have changed. In order to get around this, an alternative version
+   looks like:
+ #+BEGIN_SRC
+ssh -o "StrictHostKeyChecking no" -o "UserKnownHostsFile /dev/null" -o "PasswordAuthentication yes" -p 3333 testuser@localhost
+ #+END_SRC
 * Notes from first run in VM
 ** permissions got out of wack
 ** should move gem installation to the process of installing chef
@@ -58,6 +172,7 @@ VBoxManage modifyvm "VM name" --natpf1 "guestssh,tcp,,2222,,22"
 **** TODO extract firefox_profile to its own cookbook
 **** TODO create a build.sh for tangling dotfiles.org
 **** TODO document any other manual things, if there are any
+**** TODO add the complicated ssh cmd args to ssh hosts file
 * Other External Services I Use
   I think this needs to be mentioned
   - read later
