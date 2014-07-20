@@ -240,6 +240,10 @@ the embedded chef.
   /opt/chef/embedded/bin/gem install knife-solo
   /opt/chef/embedded/bin/gem install knife-solo_data_bag
 #+END_SRC
+
+more about chef solo databags
+http://distinctplace.com/infrastructure/2013/08/04/secure-data-bag-items-with-chef-solo/
+
 ** Fetch Cookbooks
 #+BEGIN_SRC sh :tangle ./bin/get-cookbooks.sh :shebang "#!/bin/bash" :noweb yes
   # include reset environment code
