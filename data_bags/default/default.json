@@ -1,0 +1,15 @@
+{
+  "id": "default",
+  "secret": {
+    "encrypted_data": "i4jHTHfaRmqXrGEBPU8AagRl0ZZc75eFCCt8WYnUAER1V4m/9gwwwfnUkfOY\nmH4j\n",
+    "iv": "4bpsmeWk2d9cqVwnswAWsg==\n",
+    "version": 1,
+    "cipher": "aes-256-cbc"
+  },
+  "lastpass_hashed_pw": {
+    "encrypted_data": "Du9jkDdIEMsqDYF1D0c4OE5GJUumyy8xIQ+4ZmcEjFZHxwpJp6QkBbdQA9jM\nz81beUE4UoXebuQPVmuUMa2K/YKegZuhqHyzbwEP4niRUCQ=\n",
+    "iv": "uSltnmxTqIcBJmTrYwoOPQ==\n",
+    "version": 1,
+    "cipher": "aes-256-cbc"
+  }
+}

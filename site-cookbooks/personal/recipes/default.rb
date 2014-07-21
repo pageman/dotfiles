@@ -59,7 +59,9 @@ expand_file = ->(name){
   ::File.expand_path ::File.join(__FILE__, "../../files/default", name)
 }
 
-hashed_pw = ::File.read(::File.expand_path "~/var/secrets/fx-last-pass-pw-hash").strip
+secret_file_location =ENV["DATA_BAG_SECRET_FILE"] || ::File.expand_path("~/var/secrets/encrypted_data_bag_secret")
+secret = Chef::EncryptedDataBagItem.load_secret(secret_file_location)
+hashed_pw = Chef::EncryptedDataBagItem.load("default", "default", secret)["lastpass_hashed_pw"]
 lastpass_encoded_pw = %Q{user_pref("extensions.lastpass.loginpws", "mccracken.joel%40gmail.com=#{hashed_pw}");}
 
 personal_firefox_profile "Personal" do
