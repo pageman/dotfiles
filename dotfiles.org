@@ -889,6 +889,7 @@ to ~cookbooks~, which is managed by Librarian Chef, and
   file_cache_path ::File.join(current_dir, "tmp", "cache")
   cookbook_path [File.join(current_dir, "cookbooks"),
                  File.join(current_dir, "site-cookbooks")]
+  data_bag_path ::File.join(current_dir, "data_bags")
 #+END_SRC
 
 
