@@ -22,6 +22,7 @@ directory File.join(home_dir, "var", "secrets") do
   recursive true
   action :create
 end
+
 link "bin" do
   target_file File.join(home_dir, "bin")
   to File.join dotfiles_dir, "bin"

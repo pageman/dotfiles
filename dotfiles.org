@@ -5,12 +5,86 @@
   This project contains the code and resources to set up and configure
   a workstation in the way I want it.
 
+  Overall, this serves two purposes. One is to have comfortable
+  control over my workstation, which is something that causes me
+  stress again and again. I actually stop improving my computing setup
+  because I have experienced the need to move from one setup to
+  another and having things break.
+
+  The other reason really is a question I am trying to answer: Can I
+  build a system that I feel secure with? I personally have nothing to
+  hide, but it bothers me that my information is insecure.
+
   The overall steps to configure a system:
   1. Acquire this code.
-  1. Acquire the data bag secret key.
-  2. Install chef with the omnibus installer.
-  3. Run Chef.
-  4. Restore (other?) private data (???).
+  2. Acquire the data bag secret key.
+  3. Install chef with the omnibus installer.
+  4. Run Chef.
+  5. Restore (other?) private data (???).
+* Installation and Setup
+** Acquire the Project Code
+To acquire and easily install this project:
+#+BEGIN_SRC
+  curl -LO https://raw.githubusercontent.com/joelmccracken/dotfiles/master/install.sh
+  bash install.sh
+#+END_SRC
+The source for that install script:
+#+BEGIN_SRC sh :tangle ./install.sh :shebang "#!/bin/bash" :noweb yes
+  set -e
+
+
+  function debug
+  {
+      if [ "$DEBUG" == "true" ] ;
+      then
+          echo DEBUG: $1
+      fi
+  }
+
+
+  dotfiles_dir=${DOTFILES_DIR:-~/dotfiles}
+
+  if [ -d "$dotfiles_dir" ]; then
+      echo "Error: Dotfiles directory already exists"
+      exit 1
+  fi
+
+  option=$1
+  tmpdir=`mktemp -d /tmp/install-dotfiles.XXXX`
+
+  debug $tmpdir
+
+  cd $tmpdir
+
+  curl -LO https://github.com/joelmccracken/dotfiles/archive/master.zip
+
+  unzip master.zip
+
+  debug successfully unzipped
+
+
+  mv dotfiles-master $dotfiles_dir
+
+
+  echo Done! You are now ready to run the chef installer.
+#+END_SRC
+** Acquire the Databag Secret Key
+The databag secret key will allow you to unencrypt some information
+stored in this repository. Eventually, this key should go into: 
+~\~/var/secrets/encrypted_data_bag_secret~, but at first it can
+go anywhere, and can thus be specified via the environment variable
+~EDB_SECRET~. I am assuming that the secret file is initially at
+~\~/edb_secret~, and examples will reflect that.
+** Run the Chef Installer
+   Run ~./bin/install-chef-standalone.sh~.
+   This will run the ominbus installer and install Chef.
+** Run Chef
+  - ~./bin/run-chef.sh~ runs chef and converges the system.
+** Final Steps
+   Assuming all of the above steps worked correctly, the system should
+   be set.
+   All that needs to happen now is to restore any working data,
+   projects, etc.
 * Problem: need to install gcc/xcode tools
   I tried a few things:
   first of all, i tried to download the dmg from apple's site
@@ -21,21 +95,9 @@
   good way to fix this
 
   now, I am hosting the dmg on my own server.
-* notes for setting up "pre/initial" base VM image
-- ~systemsetup -setremotelogin on~ turns on ssh
-  https://discussions.apple.com/message/9191821
-- ssh from host to guest:
-  https://discussions.apple.com/message/9191821
-- for networking, use nat, forward port 3333 -> 22, can ssh via ~ssh -p 3333 testuser@localhost~
-- set networking with
-#+BEGIN_SRC
- VBoxManage modifyvm "Mavericks" --natpf1 "guestssh,tcp,,3333,,22"
-#+END_SRC
-* How to prepare a VM for testing
-
+* Preparing a Mavericks VM for Testing
 I would love to make this entire process automated, but I don't think
 that is possible.
-
 ** Create a bootable ISO
 These instructions come from [[http://thezinx.com/misc/trend/create-bootable-dmg-iso-mavericks-app/][here]], but I am copying them below in case
 that source ever goes away.
@@ -148,6 +210,15 @@ ssh -o "StrictHostKeyChecking no" -o "UserKnownHostsFile /dev/null" -o "Password
 
 At some point in the future I would like to make this easier, maybe
 with a settings file.
+** Starting and stopping a vm
+#+BEGIN_SRC
+VBoxManage startvm mavericks-test
+#+END_SRC
+
+#+BEGIN_SRC
+VBoxManage controlvm mavericks-test poweroff
+#+END_SRC
+
 * Notes from first run in VM
 ** permissions got out of wack
 ** should move gem installation to the process of installing chef
@@ -167,7 +238,7 @@ with a settings file.
 **** TODO omnifocus
 **** TODO evernote
 **** TODO dropbox
-**** TODO virtualbox
+**** TODO virtual box
 **** TODO vagrant
 **** TODO move installation of librarian chef gem to installation of chef
 **** TODO extract shadow_directory to its own cookbook
@@ -236,7 +307,7 @@ the embedded chef.
   curl -LO https://www.opscode.com/chef/install.sh
   sudo bash install.sh
   rm -rf install.sh
-  sudo chown joel:staff -R /opt/chef
+  sudo chown $USER:staff -R /opt/chef
   /opt/chef/embedded/bin/gem install librarian-chef
   /opt/chef/embedded/bin/gem install knife-solo
   /opt/chef/embedded/bin/gem install knife-solo_data_bag
@@ -310,10 +381,10 @@ have a var, and a secrets dir so far.
     recursive true
     action :create
   end
+
 #+END_SRC
 *** dotfiles/symlinks
-for now i am just replacing the old `bin/link` script
-
+Symlinks into this project's directory.
 #+name: dotfiles-symlinks
 #+BEGIN_SRC ruby
   link "bin" do
