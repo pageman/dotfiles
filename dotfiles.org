@@ -70,7 +70,7 @@ The source for that install script:
 #+END_SRC
 ** Acquire the Databag Secret Key
 The databag secret key will allow you to unencrypt some information
-stored in this repository. Eventually, this key should go into: 
+stored in this repository. Eventually, this key should go into:
 ~\~/var/secrets/encrypted_data_bag_secret~, but at first it can
 go anywhere, and can thus be specified via the environment variable
 ~EDB_SECRET~. I am assuming that the secret file is initially at
@@ -85,6 +85,8 @@ go anywhere, and can thus be specified via the environment variable
    be set.
    All that needs to happen now is to restore any working data,
    projects, etc.
+
+   remove the encrypted data bag secret from its original location.
 * Problem: need to install gcc/xcode tools
   I tried a few things:
   first of all, i tried to download the dmg from apple's site
@@ -210,6 +212,13 @@ ssh -o "StrictHostKeyChecking no" -o "UserKnownHostsFile /dev/null" -o "Password
 
 At some point in the future I would like to make this easier, maybe
 with a settings file.
+
+copying a file:
+
+#+BEGIN_SRC
+~scp -o "StrictHostKeyChecking no" -o "UserKnownHostsFile /dev/null" -o "PasswordAuthentication yes" -P 3333 \~/var/secrets/encrypted_data_bag_secret testuser@localhost:\~~
+#+END_SRC
+
 ** Starting and stopping a vm
 #+BEGIN_SRC
 VBoxManage startvm mavericks-test
@@ -326,9 +335,13 @@ http://distinctplace.com/infrastructure/2013/08/04/secure-data-bag-items-with-ch
   /opt/chef/embedded/bin/librarian-chef install --verbose
 #+END_SRC
 ** Converge the system
-#+BEGIN_SRC sh :tangle ./bin/run-chef.sh :shebang "#!/bin/bash" :noweb yes
+#+BEGIN_SRC fundamental :tangle ./bin/run-chef.sh :shebang "#!/bin/bash" :noweb yes
   # include reset environment code
   <<reset-environment>>
+
+  if [[ "$EDB_SECRET" != "" && -f "$EDB_SECRET" ]]; then
+    ln -s "$EDB_SECRET" ./encrypted_data_bag_secret
+  fi
 
   # absolute paths to executables
   # are used to avoid problems with RVM.
@@ -425,9 +438,27 @@ profile.
     ::File.expand_path ::File.join(__FILE__, "../../files/default", name)
   }
 
-  secret_file_location =ENV["DATA_BAG_SECRET_FILE"] || ::File.expand_path("~/var/secrets/encrypted_data_bag_secret")
-  secret = Chef::EncryptedDataBagItem.load_secret(secret_file_location)
-  hashed_pw = Chef::EncryptedDataBagItem.load("default", "default", secret)["lastpass_hashed_pw"]
+  def secret_file_location
+    @secret_file_location ||=
+      begin
+        possible_locations = ["~/var/secrets/encrypted_data_bag_secret",
+                              ::File.join(::File.dirname(__FILE__), '../../../', 'encrypted_data_bag_secret'),
+                             ].map {|file| ::File.expand_path(file) }
+        found = possible_locations.find do |file|
+        ::File.exist? file
+      end
+        unless found
+          raise "Could not find a secrets file. Looked for it at: #{possible_locations}"
+        end
+      end
+  end
+
+  def find_secret
+    @found_secret ||=
+      Chef::EncryptedDataBagItem.load_secret(secret_file_location)
+  end
+
+  hashed_pw = Chef::EncryptedDataBagItem.load("default", "default", find_secret)["lastpass_hashed_pw"]
   lastpass_encoded_pw = %Q{user_pref("extensions.lastpass.loginpws", "mccracken.joel%40gmail.com=#{hashed_pw}");}
 
   personal_firefox_profile "Personal" do

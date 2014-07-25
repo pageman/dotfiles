@@ -60,9 +60,27 @@ expand_file = ->(name){
   ::File.expand_path ::File.join(__FILE__, "../../files/default", name)
 }
 
-secret_file_location =ENV["DATA_BAG_SECRET_FILE"] || ::File.expand_path("~/var/secrets/encrypted_data_bag_secret")
-secret = Chef::EncryptedDataBagItem.load_secret(secret_file_location)
-hashed_pw = Chef::EncryptedDataBagItem.load("default", "default", secret)["lastpass_hashed_pw"]
+def secret_file_location
+  @secret_file_location ||=
+    begin
+      possible_locations = ["~/var/secrets/encrypted_data_bag_secret",
+                            ::File.join(::File.dirname(__FILE__), '../../../', 'encrypted_data_bag_secret'),
+                           ].map {|file| ::File.expand_path(file) }
+      found = possible_locations.find do |file|
+      ::File.exist? file
+    end
+      unless found
+        raise "Could not find a secrets file. Looked for it at: #{possible_locations}"
+      end
+    end
+end
+
+def find_secret
+  @found_secret ||=
+    Chef::EncryptedDataBagItem.load_secret(secret_file_location)
+end
+
+hashed_pw = Chef::EncryptedDataBagItem.load("default", "default", find_secret)["lastpass_hashed_pw"]
 lastpass_encoded_pw = %Q{user_pref("extensions.lastpass.loginpws", "mccracken.joel%40gmail.com=#{hashed_pw}");}
 
 personal_firefox_profile "Personal" do

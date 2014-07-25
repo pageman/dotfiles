@@ -11,6 +11,10 @@ unset GEM_PATH
 # the front of the path
 PATH="/opt/chef/bin:/opt/chef/embedded/bin:$PATH"
 
+if [[ "$EDB_SECRET" != "" && -f "$EDB_SECRET" ]]; then
+  ln -s "$EDB_SECRET" ./encrypted_data_bag_secret
+fi
+
 # absolute paths to executables
 # are used to avoid problems with RVM.
 sudo /opt/chef/bin/chef-solo -c solo.rb -j solo.json "$@"
