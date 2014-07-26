@@ -364,6 +364,58 @@ This piece should:
 - create any directories that are missing
 - create any symlinks to e.g. dotfiles
 - create an "inbox" shadow directory
+*** The SecretSource library
+#+BEGIN_SRC ruby :noweb yes :tangle ./site-cookbooks/personal/libraries/secret_source.rb
+  #
+  # Secret Source
+  #
+
+  class SecretSource
+
+
+    def secret_file_location
+      @secret_file_location ||=
+        begin
+          possible_locations = ["~/var/secrets/encrypted_data_bag_secret",
+                                ::File.join(::File.dirname(__FILE__), '../../../', 'encrypted_data_bag_secret'),
+                               ].map {|file| ::File.expand_path(file) }
+          found = possible_locations.find { |file| ::File.exist? file }
+
+          unless found
+            raise "Could not find a secrets file. Looked for it at: #{possible_locations}"
+          end
+
+          found
+        end
+    end
+
+    def find_secret
+      @found_secret ||=
+        Chef::EncryptedDataBagItem.load_secret(secret_file_location)
+    end
+
+    def self.autofind
+      new.find_secret
+    end
+  end
+#+END_SRC
+
+
+*** An initial "install xcode" recipe
+#+BEGIN_SRC ruby :noweb yes :tangle ./site-cookbooks/personal/recipes/install_xcode.rb
+  #
+  # install xcode
+  #
+
+  secret = SecretSource.autofind
+  xcode_url = Chef::EncryptedDataBagItem.load("default", "default", secret)["xcode_url"]
+
+  dmg_package "XCode Tools" do
+    source xcode_url
+    action :install
+  end
+#+END_SRC
+
 *** The "Inbox" Shadow directory
 #+NAME: inbox
 #+BEGIN_SRC ruby
@@ -439,36 +491,15 @@ profile.
     ::File.expand_path ::File.join(__FILE__, "../../files/default", name)
   }
 
-  def secret_file_location
-    @secret_file_location ||=
-      begin
-        possible_locations = ["~/var/secrets/encrypted_data_bag_secret",
-                              ::File.join(::File.dirname(__FILE__), '../../../', 'encrypted_data_bag_secret'),
-                             ].map {|file| ::File.expand_path(file) }
-        found = possible_locations.find { |file| ::File.exist? file }
 
-        unless found
-          raise "Could not find a secrets file. Looked for it at: #{possible_locations}"
-        end
-
-        found
-      end
-  end
-
-
-  def find_secret
-    @found_secret ||=
-      Chef::EncryptedDataBagItem.load_secret(secret_file_location)
-  end
-
-  hashed_pw = Chef::EncryptedDataBagItem.load("default", "default", find_secret)["lastpass_hashed_pw"]
+  secret = SecretSource.autofind
+  hashed_pw = Chef::EncryptedDataBagItem.load("default", "default", secret)["lastpass_hashed_pw"]
   lastpass_encoded_pw = %Q{user_pref("extensions.lastpass.loginpws", "mccracken.joel%40gmail.com=#{hashed_pw}");}
 
-  lex_file_location = secret_file_location
   file ::File.expand_path("~/var/secrets/encrypted_data_bag_secret") do
     owner node[:current_user]
     group node[:current_group]
-    content File.read(lex_file_location)
+    content SecretSource.autofind
   end
 
 
@@ -716,6 +747,7 @@ default['username'] = 'joel'
   depends "shadow_directory"
   depends "sprout-osx-base"
 #+END_SRC
+
 
 ** Shadow Directory
 *** Changelog
@@ -1018,6 +1050,7 @@ used in the ~personal~ recipe.
   {
     "firefox_bin": "/Applications/Firefox.app/Contents/MacOS/firefox-bin",
     "run_list": [
+      "recipe[personal::install_xcode]",
       "recipe[sprout-osx-base::homebrew]",
       "recipe[sprout-osx-apps::emacs]",
       "recipe[sprout-osx-apps::firefox]",

@@ -1,14 +1,20 @@
 {
   "id": "default",
   "secret": {
-    "encrypted_data": "i4jHTHfaRmqXrGEBPU8AagRl0ZZc75eFCCt8WYnUAER1V4m/9gwwwfnUkfOY\nmH4j\n",
-    "iv": "4bpsmeWk2d9cqVwnswAWsg==\n",
+    "encrypted_data": "++H5+TI9FVWaJhXIl757339zl4/wF/lLhKEVysuV7+c892GdrofknsgM71st\nqnxH\n",
+    "iv": "yCQFzZIdo/+07f/rbpptFw==\n",
     "version": 1,
     "cipher": "aes-256-cbc"
   },
   "lastpass_hashed_pw": {
-    "encrypted_data": "Du9jkDdIEMsqDYF1D0c4OE5GJUumyy8xIQ+4ZmcEjFZHxwpJp6QkBbdQA9jM\nz81beUE4UoXebuQPVmuUMa2K/YKegZuhqHyzbwEP4niRUCQ=\n",
-    "iv": "uSltnmxTqIcBJmTrYwoOPQ==\n",
+    "encrypted_data": "6DGPpBYK5O2D8V5qaSJCpHD4Zw440ebZbbmZQ2QT/H/Mb1aeRjpbbJ2d38Bq\nZb54oS5SlAZJK/WG23WUgHR4MgdzEp/+jUrbj4cM4Oqp92Y=\n",
+    "iv": "woSvA6i5O/DOIg1pIJowew==\n",
+    "version": 1,
+    "cipher": "aes-256-cbc"
+  },
+  "xcode_url": {
+    "encrypted_data": "/U1q2JPzgvV63qvClp2lng3XlGeBJm2JuOtbQ1X6Lg24qP7JK2gVRChiyKgj\nno8tDL4/cWkmxyFr+in16V/wt3O6njvAbxyxN8pEuGr4ZAZwXbs6UAnifQF4\nf9gZEQ6NaJjTQ5JKnBXrcEW7b+pdUS2qVG4m9sudhsVF28clYsI=\n",
+    "iv": "WY70Adrs8p7cgVJvpKhneQ==\n",
     "version": 1,
     "cipher": "aes-256-cbc"
   }
