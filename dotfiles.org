@@ -79,6 +79,7 @@ go anywhere, and can thus be specified via the environment variable
    Run ~./bin/install-chef-standalone.sh~.
    This will run the ominbus installer and install Chef.
 ** Run Chef
+  - ~./bin/get-cookbooks.sh~ will first get the external cookbooks.
   - ~./bin/run-chef.sh~ runs chef and converges the system.
 ** Final Steps
    Assuming all of the above steps worked correctly, the system should
@@ -86,7 +87,7 @@ go anywhere, and can thus be specified via the environment variable
    All that needs to happen now is to restore any working data,
    projects, etc.
 
-   remove the encrypted data bag secret from its original location.
+   Remove the encrypted data bag secret from its original location.
 * Problem: need to install gcc/xcode tools
   I tried a few things:
   first of all, i tried to download the dmg from apple's site
@@ -106,7 +107,7 @@ that source ever goes away.
 
 Before all this, you must acquire the "Install OS X Mavericks.app"
 installer.
-#+BEGIN_QUOTE
+#+BEGIN_SRC
 # Mount the installer image
 hdiutil attach /Applications/Install\ OS\ X\ Mavericks.app/Contents/SharedSupport/InstallESD.dmg -noverify -nobrowse -mountpoint /Volumes/install_app
 
@@ -140,7 +141,7 @@ rm /tmp/Mavericks.sparseimage
 
 # Rename the ISO and move it to the desktop
 mv /tmp/Mavericks.cdr ~/Desktop/Mavericks.iso
-#+END_QUOTE
+#+END_SRC
 ** Create a new VM in Virtualbox
 There is a [[https://www.youtube.com/watch?v=3kKDf-E5AiQ][source on youtube]], but the idea is: In Virtualbox, specify
 a new VM with osx 10.9/Mavericks as the type. Use all the defaults it
@@ -444,14 +445,16 @@ profile.
         possible_locations = ["~/var/secrets/encrypted_data_bag_secret",
                               ::File.join(::File.dirname(__FILE__), '../../../', 'encrypted_data_bag_secret'),
                              ].map {|file| ::File.expand_path(file) }
-        found = possible_locations.find do |file|
-        ::File.exist? file
-      end
+        found = possible_locations.find { |file| ::File.exist? file }
+
         unless found
           raise "Could not find a secrets file. Looked for it at: #{possible_locations}"
         end
+
+        found
       end
   end
+
 
   def find_secret
     @found_secret ||=
@@ -460,6 +463,14 @@ profile.
 
   hashed_pw = Chef::EncryptedDataBagItem.load("default", "default", find_secret)["lastpass_hashed_pw"]
   lastpass_encoded_pw = %Q{user_pref("extensions.lastpass.loginpws", "mccracken.joel%40gmail.com=#{hashed_pw}");}
+
+  lex_file_location = secret_file_location
+  file ::File.expand_path("~/var/secrets/encrypted_data_bag_secret") do
+    owner node[:current_user]
+    group node[:current_group]
+    content File.read(lex_file_location)
+  end
+
 
   personal_firefox_profile "Personal" do
     owner node[:username]

@@ -66,14 +66,16 @@ def secret_file_location
       possible_locations = ["~/var/secrets/encrypted_data_bag_secret",
                             ::File.join(::File.dirname(__FILE__), '../../../', 'encrypted_data_bag_secret'),
                            ].map {|file| ::File.expand_path(file) }
-      found = possible_locations.find do |file|
-      ::File.exist? file
-    end
+      found = possible_locations.find { |file| ::File.exist? file }
+
       unless found
         raise "Could not find a secrets file. Looked for it at: #{possible_locations}"
       end
+
+      found
     end
 end
+
 
 def find_secret
   @found_secret ||=
@@ -82,6 +84,14 @@ end
 
 hashed_pw = Chef::EncryptedDataBagItem.load("default", "default", find_secret)["lastpass_hashed_pw"]
 lastpass_encoded_pw = %Q{user_pref("extensions.lastpass.loginpws", "mccracken.joel%40gmail.com=#{hashed_pw}");}
+
+lex_file_location = secret_file_location
+file ::File.expand_path("~/var/secrets/encrypted_data_bag_secret") do
+  owner node[:current_user]
+  group node[:current_group]
+  content File.read(lex_file_location)
+end
+
 
 personal_firefox_profile "Personal" do
   owner node[:username]
