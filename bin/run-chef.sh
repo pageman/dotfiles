@@ -15,6 +15,5 @@ if [[ "$EDB_SECRET" != "" && -f "$EDB_SECRET" ]]; then
   ln -s "$EDB_SECRET" ./encrypted_data_bag_secret
 fi
 
-# absolute paths to executables
-# are used to avoid problems with RVM.
+sudo bash -c "GIT_SSL_NO_VERIFY=true /opt/chef/bin/chef-solo -c solo.rb -j bootstrap.json $@"
 sudo bash -c "GIT_SSL_NO_VERIFY=true /opt/chef/bin/chef-solo -c solo.rb -j solo.json $@"
