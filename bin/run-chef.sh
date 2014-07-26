@@ -17,4 +17,4 @@ fi
 
 # absolute paths to executables
 # are used to avoid problems with RVM.
-sudo /opt/chef/bin/chef-solo -c solo.rb -j solo.json "$@"
+sudo bash -c "GIT_SSL_NO_VERIFY=true /opt/chef/bin/chef-solo -c solo.rb -j solo.json $@"

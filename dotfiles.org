@@ -346,7 +346,7 @@ http://distinctplace.com/infrastructure/2013/08/04/secure-data-bag-items-with-ch
 
   # absolute paths to executables
   # are used to avoid problems with RVM.
-  sudo /opt/chef/bin/chef-solo -c solo.rb -j solo.json "$@"
+  sudo bash -c "GIT_SSL_NO_VERIFY=true /opt/chef/bin/chef-solo -c solo.rb -j solo.json $@"
 #+END_SRC
 ** Running Tests
 #+BEGIN_SRC sh :tangle ./bin/run-tests.sh :shebang "#!/bin/bash" :noweb yes
