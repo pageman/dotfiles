@@ -14,5 +14,7 @@ if node[:platform] == "mac_os_x" && node[:platform_version] =~ /10\.9\.\d+/
     action :install
     type 'pkg'
     accept_eula true
+    volumes_dir "Command\ Line\ Developer\ Tools"
+    app "Command Line Tools (OS X 10.9)"
   end
 end
