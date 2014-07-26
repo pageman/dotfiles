@@ -12,5 +12,7 @@ if node[:platform] == "mac_os_x" && node[:platform_version] =~ /10\.9\.\d+/
   dmg_package "XCode Tools" do
     source xcode_url
     action :install
+    type 'pkg'
+    accept_eula true
   end
 end
