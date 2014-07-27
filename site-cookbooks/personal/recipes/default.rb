@@ -4,7 +4,7 @@
 #
 
 require 'pry' # i use it all the time
-home_dir = Dir.home(node['username'])
+home_dir = Dir.home(node[:current_user])
 dotfiles_dir = File.expand_path(File.join(File.expand_path(__FILE__), "../../../../"))
 
 directory File.join(home_dir, "var") do
