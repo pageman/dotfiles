@@ -404,24 +404,6 @@ This piece should:
 #+END_SRC
 
 
-*** An initial "install xcode" recipe
-#+BEGIN_SRC ruby :noweb yes :tangle ./site-cookbooks/personal/recipes/install_xcode.rb
-  #
-  # install xcode
-  #
-
-  # this version of xcode tools is for mavericks
-  if node[:platform] == "mac_os_x" && node[:platform_version] =~ /10\.9\.\d+/
-    secret = SecretSource.autofind
-    xcode_url = Chef::EncryptedDataBagItem.load("default", "default", secret)["xcode_url"]
-
-    dmg_package "XCode Tools" do
-      source xcode_url
-      action :install
-    end
-  end
-#+END_SRC
-
 *** The "Inbox" Shadow directory
 #+NAME: inbox
 #+BEGIN_SRC ruby
@@ -1056,7 +1038,6 @@ used in the ~personal~ recipe.
   {
     "firefox_bin": "/Applications/Firefox.app/Contents/MacOS/firefox-bin",
     "run_list": [
-      "recipe[personal::install_xcode]",
       "recipe[sprout-osx-base::homebrew]",
       "recipe[sprout-osx-apps::emacs]",
       "recipe[sprout-osx-apps::firefox]",
