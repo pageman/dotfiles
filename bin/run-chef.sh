@@ -16,4 +16,5 @@ if [[ "$EDB_SECRET" != "" && -f "$EDB_SECRET" ]]; then
 fi
 
 sudo bash -c "GIT_SSL_NO_VERIFY=true /opt/chef/bin/chef-solo -c solo.rb -j bootstrap.json $@"
+/opt/chef/embedded/bin/librarian-chef install --verbose
 sudo bash -c "GIT_SSL_NO_VERIFY=true /opt/chef/bin/chef-solo -c solo.rb -j solo.json $@"
