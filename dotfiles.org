@@ -703,7 +703,7 @@ The file ~site-cookbooks/personal/providers/firefox_profile.rb~:
 *** Miscellaneous Software
 #+name: misc-software
 #+BEGIN_SRC ruby
-  brew "ruby20"
+  brew "ruby"
   brew "git"
 #+END_SRC
 *** The Combined Recipe
