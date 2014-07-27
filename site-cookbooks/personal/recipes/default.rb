@@ -8,16 +8,16 @@ home_dir = Dir.home(node[:current_user])
 dotfiles_dir = File.expand_path(File.join(File.expand_path(__FILE__), "../../../../"))
 
 directory File.join(home_dir, "var") do
-  owner node['username']
-  group node['username']
+  owner node['current_user']
+  group node['current_user']
   mode "0755"
   recursive true
   action :create
 end
 
 directory File.join(home_dir, "var", "secrets") do
-  owner node['username']
-  group node['username']
+  owner node['current_user']
+  group node['current_user']
   mode "0700"
   recursive true
   action :create
@@ -52,7 +52,7 @@ end
 shadow_directory "Downloads -> Inbox" do
   replace File.expand_path("~/Downloads")
   with    File.expand_path("~/Inbox")
-  owner   node[:username]
+  owner   node[:current_user]
   group   "staff"
 end
 
@@ -73,7 +73,7 @@ end
 
 
 personal_firefox_profile "Personal" do
-  owner node[:username]
+  owner node[:current_user]
   group "staff"
 
   location File.expand_path("~/var/FirefoxProfiles/Personal")
