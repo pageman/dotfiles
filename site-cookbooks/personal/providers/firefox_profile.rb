@@ -50,7 +50,7 @@ action :install do
     converge_by "set profile ownership to #{ownership}" do
       cmd = <<-FX_CMD.strip
         cd #{new_resource.location}
-        chown -R #{ownership} *
+        sudo chown -R #{ownership} *
       FX_CMD
 
       shell_out!(cmd, user: new_resource.owner)

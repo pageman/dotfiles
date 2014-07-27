@@ -34,7 +34,7 @@ action :install do
     ownership = [new_resource.owner, new_resource.group].compact.join ":"
     converge_by "set profile ownership to #{ownership}" do
       cmd = <<-FX_CMD.strip
-        chown -R #{ownership} #{new_resource.with_path}
+        sudo chown -R #{ownership} #{new_resource.with_path}
       FX_CMD
 
       shell_out!(cmd, user: new_resource.owner)

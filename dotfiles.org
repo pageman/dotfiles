@@ -75,6 +75,12 @@ stored in this repository. Eventually, this key should go into:
 go anywhere, and can thus be specified via the environment variable
 ~EDB_SECRET~. I am assuming that the secret file is initially at
 ~\~/edb_secret~, and examples will reflect that.
+
+#+BEGIN_SRC
+EDB_SECRET=~/encrypted_data_bag_secret bin/run-chef.sh
+#+END_SRC
+
+
 ** Run the Chef Installer
    Run ~./bin/install-chef-standalone.sh~.
    This will run the ominbus installer and install Chef.
@@ -179,7 +185,7 @@ If you ever need to re-import the vm image we just created, here's how:
 
 First, run this the command with --dry-run
 #+BEGIN_SRC
-VBoxManage import ~/Documents/wherever-you-put-the-vm.ova --dry-run
+VBoxManage import ~/Documents/mavericks-base-ssh-enabled.ova --dry-run
 #+END_SRC
 
 If all is well with what it detected, then run it again without
@@ -187,7 +193,7 @@ If all is well with what it detected, then run it again without
 ** Delete a VM
 If you need to delete a VM currently in VirtualBox:
 #+BEGIN_SRC
-VBoxManage unregistervm mavericks-vm-name-here --delete
+VBoxManage unregistervm mavericks-test --delete
 #+END_SRC
 
 ** Port Forwarding for SSH
@@ -195,7 +201,7 @@ In order to access this VM over ssh, we need to set up port
 forwarding. Running this from the host will enable that:
 
 #+BEGIN_SRC
-VBoxManage modifyvm "Mavericks" --natpf1 "guestssh,tcp,,3333,,22"
+VBoxManage modifyvm mavericks-test --natpf1 "guestssh,tcp,,3333,,22"
 #+END_SRC
 
 Now you can ssh into the vm with:
@@ -595,7 +601,7 @@ The file ~site-cookbooks/personal/providers/firefox_profile.rb~:
       converge_by "set profile ownership to #{ownership}" do
         cmd = <<-FX_CMD.strip
           cd #{new_resource.location}
-          chown -R #{ownership} *
+          sudo chown -R #{ownership} *
         FX_CMD
 
         shell_out!(cmd, user: new_resource.owner)
@@ -846,7 +852,7 @@ default['username'] = 'joel'
       ownership = [new_resource.owner, new_resource.group].compact.join ":"
       converge_by "set profile ownership to #{ownership}" do
         cmd = <<-FX_CMD.strip
-          chown -R #{ownership} #{new_resource.with_path}
+          sudo chown -R #{ownership} #{new_resource.with_path}
         FX_CMD
 
         shell_out!(cmd, user: new_resource.owner)
