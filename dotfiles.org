@@ -235,6 +235,7 @@ VBoxManage controlvm mavericks-test poweroff
 ** gcc wasn't installed by default -- would really like to script that.
 ** need to move private data into place, esp last password pw hashed
 * Things that need to be done
+**** TODO move "bootstrap" cookbook into the dotfiles.org file
 **** TODO determine if rvm hacks are still necessary
 ***** if so: add a "chef-env" script that runs other scripts in the chef reset environment
       e.g. something like
