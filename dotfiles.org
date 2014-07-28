@@ -169,7 +169,7 @@ can re-import it if something goes wrong.
 You can export with the UI, but hey, lets do it with the VBoxManage
 command:
 #+BEGIN_SRC
-VBoxManage export your-mavericks-vm-name-here -o ~/Documents/mavericks-base-ssh-enabled.ovf
+VBoxManage export mavericks-test -o ~/Documents/new/mavericks-base-ssh-enabled.ovf
 #+END_SRC
 
 The resulting files may be bundled together like so:
@@ -214,7 +214,7 @@ After you do this a few times, you might run into host key
 problems. Just do this:
 
  #+BEGIN_SRC
-ssh -o "StrictHostKeyChecking no" -o "UserKnownHostsFile /dev/null" -o "PasswordAuthentication yes" -p 3333 testuser@localhost
+ssh -i ~/dotfiles/misc/vagrant_private_key -o "StrictHostKeyChecking no" -o "UserKnownHostsFile /dev/null" -o "PasswordAuthentication yes" -p 3333 testuser@localhost
  #+END_SRC
 
 At some point in the future I would like to make this easier, maybe
