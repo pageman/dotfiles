@@ -64,14 +64,8 @@ GIT
       dmg (>= 0.0.0)
       sprout-osx-base (>= 0.0.0)
 
-PATH
-  remote: site-cookbooks/personal
-  specs:
-    personal (0.1.0)
-
 DEPENDENCIES
   osx (>= 0)
-  personal (>= 0)
   pivotal_workstation (>= 0)
   sprout-osx-apps (>= 0)
   sprout-osx-base (>= 0)
