@@ -18,6 +18,5 @@ fi
 /opt/chef/bin/chef-solo -c solo.rb -j bootstrap.json $@
 
 /opt/chef/embedded/bin/librarian-chef install --verbose
-
 /opt/chef/bin/chef-solo -c solo.rb -j solo.json $@
 chown -R $SUDO_USER:staff ./*

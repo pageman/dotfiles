@@ -321,10 +321,21 @@ the embedded chef.
 ** Install Chef with Omnibus installer
 /This script is exported to ~bin/install-chef-standalone.sh~./
 #+BEGIN_SRC sh :tangle ./bin/install-chef-standalone.sh :shebang "#!/bin/bash"
+  if [ "$DOTFILES_TEST" == "true" ];
+  then
+      function sudo_fn {
+          echo testuser | sudo -S "$@"
+      }
+  else
+      function sudo_fn {
+          sudo "$@"
+      }
+  fi
+
   curl -LO https://www.opscode.com/chef/install.sh
-  sudo bash install.sh
+  sudo_fn bash install.sh
   rm -rf install.sh
-  sudo bash -c 'chown -R $SUDO_USER:staff /opt/chef/*'
+  sudo_fn bash -c 'chown -R $SUDO_USER:staff /opt/chef/*'
   /opt/chef/embedded/bin/gem install librarian-chef
   /opt/chef/embedded/bin/gem install knife-solo
   /opt/chef/embedded/bin/gem install knife-solo_data_bag
@@ -351,11 +362,12 @@ http://distinctplace.com/infrastructure/2013/08/04/secure-data-bag-items-with-ch
     ln -s "$EDB_SECRET" ./encrypted_data_bag_secret
   fi
 
-  sudo bash -c "GIT_SSL_NO_VERIFY=true /opt/chef/bin/chef-solo -c solo.rb -j bootstrap.json $@"
+  /opt/chef/bin/chef-solo -c solo.rb -j bootstrap.json $@
 
-  sudo /opt/chef/embedded/bin/librarian-chef install --verbose
-  sudo bash -c "GIT_SSL_NO_VERIFY=true /opt/chef/bin/chef-solo -c solo.rb -j solo.json $@"
-  sudo bash -c 'chown -R $SUDO_USER:staff ./*'
+  /opt/chef/embedded/bin/librarian-chef install --verbose
+  /opt/chef/bin/chef-solo -c solo.rb -j solo.json $@
+  chown -R $SUDO_USER:staff ./*
+
 #+END_SRC
 ** Running Tests
 #+BEGIN_SRC sh :tangle ./bin/run-tests.sh :shebang "#!/bin/bash" :noweb yes
