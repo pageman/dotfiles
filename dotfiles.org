@@ -69,24 +69,20 @@ The source for that install script:
   echo Done! You are now ready to run the chef installer.
 #+END_SRC
 ** Acquire the Databag Secret Key
-The databag secret key will allow you to unencrypt some information
+The databag secret key allows you to unencrypt some information
 stored in this repository. Eventually, this key should go into:
 ~\~/var/secrets/encrypted_data_bag_secret~, but at first it can
 go anywhere, and can thus be specified via the environment variable
 ~EDB_SECRET~. I am assuming that the secret file is initially at
-~\~/edb_secret~, and examples will reflect that.
-
-#+BEGIN_SRC
-EDB_SECRET=~/encrypted_data_bag_secret bin/run-chef.sh
-#+END_SRC
-
-
+~\~/encrypted_data_bag_secret~, and examples will reflect that.
 ** Run the Chef Installer
    Run ~./bin/install-chef-standalone.sh~.
    This will run the ominbus installer and install Chef.
 ** Run Chef
-  - ~./bin/get-cookbooks.sh~ will first get the external cookbooks.
-  - ~./bin/run-chef.sh~ runs chef and converges the system.
+   The following command runs chef and converges the system.
+  #+BEGIN_SRC
+   EDB_SECRET=~/encrypted_data_bag_secret bin/run-chef.sh
+  #+END_SRC
 ** Final Steps
    Assuming all of the above steps worked correctly, the system should
    be set.
@@ -94,6 +90,7 @@ EDB_SECRET=~/encrypted_data_bag_secret bin/run-chef.sh
    projects, etc.
 
    Remove the encrypted data bag secret from its original location.
+   It should now be moved to its final destination in ~\~/var/secrets~.
 * Problem: need to install gcc/xcode tools
   I tried a few things:
   first of all, i tried to download the dmg from apple's site
