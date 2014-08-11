@@ -1,8 +1,7 @@
+
 #
 # install xcode
 #
-
-
 
 # this version of xcode tools is for mavericks
 if node[:platform] == "mac_os_x" && node[:platform_version] =~ /10\.9\.\d+/
