@@ -238,28 +238,29 @@ VBoxManage controlvm mavericks-test poweroff
 ** gcc wasn't installed by default -- would really like to script that.
 ** need to move private data into place, esp last password pw hashed
 * Things that need to be done
-**** TODO move "bootstrap" cookbook into the dotfiles.org file
-**** TODO determine if rvm hacks are still necessary
-***** if so: add a "chef-env" script that runs other scripts in the chef reset environment
-      e.g. something like
-      set all the env vars
-      set path
-      exec "$@"
-      etc
-      (old) note: in bash bypass rvm gem function with 'command' builtin
-**** TODO write backup script
-***** should send to s3
-**** TODO omnifocus
-**** TODO evernote
-**** TODO dropbox
-**** TODO virtual box
-**** TODO vagrant
-**** TODO move installation of librarian chef gem to installation of chef
-**** TODO extract shadow_directory to its own cookbook
-**** TODO extract firefox_profile to its own cookbook
-**** TODO create a build.sh for tangling dotfiles.org
-**** TODO document any other manual things, if there are any
-**** TODO add the complicated ssh cmd args to ssh hosts file
+** TODO remove secret_source code duplication
+** TODO move "bootstrap" cookbook into the dotfiles.org file
+** TODO determine if rvm hacks are still necessary
+*** if so: add a "chef-env" script that runs other scripts in the chef reset environment
+    e.g. something like
+    set all the env vars
+    set path
+    exec "$@"
+    etc
+    (old) note: in bash bypass rvm gem function with 'command' builtin
+** TODO write backup script
+*** should send to s3
+** TODO omnifocus
+** TODO evernote
+** TODO dropbox
+** TODO virtual box
+** TODO vagrant
+** TODO move installation of librarian chef gem to installation of chef
+** TODO extract shadow_directory to its own cookbook
+** TODO extract firefox_profile to its own cookbook
+** TODO create a build.sh for tangling dotfiles.org
+** TODO document any other manual things, if there are any
+** TODO add the complicated ssh cmd args to ssh hosts file
 * Other External Services I Use
   I think this needs to be mentioned
   - read later
