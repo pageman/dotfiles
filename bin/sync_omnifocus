@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+echo `date`: Starting Omnifocus sync >> /Users/joel/var/omnifocus_sync.log
+set -e
+cd /Users/joel/bin;
+osascript add_ttm_tag.applescript
+echo `date`: Omnifocus sync done >> /Users/joel/var/omnifocus_sync.log
