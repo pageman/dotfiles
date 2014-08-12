@@ -238,9 +238,9 @@ VBoxManage controlvm mavericks-test poweroff
 ** gcc wasn't installed by default -- would really like to script that.
 ** need to move private data into place, esp last password pw hashed
 * Things that need to be done
+** TODO separate this file into several smaller files
 ** TODO remove bootstrap running from "normal" chef convergence script
 ** TODO remove secret_source code duplication
-** TODO move "bootstrap" cookbook into the dotfiles.org file
 ** TODO determine if rvm hacks are still necessary
 *** if so: add a "chef-env" script that runs other scripts in the chef reset environment
     e.g. something like
@@ -256,12 +256,25 @@ VBoxManage controlvm mavericks-test poweroff
 ** TODO dropbox
 ** TODO virtual box
 ** TODO vagrant
+** TODO upgrade to newest versions of pivotal sprout recipes
 ** TODO move installation of librarian chef gem to installation of chef
 ** TODO extract shadow_directory to its own cookbook
 ** TODO extract firefox_profile to its own cookbook
-** TODO create a build.sh for tangling dotfiles.org
+** TODO create a rake task for tangling dotfiles.org
+   also going to need tangling for other files when this file is split
+   would like to have this publishable
 ** TODO document any other manual things, if there are any
 ** TODO add the complicated ssh cmd args to ssh hosts file
+** TODO work on my dual encryption scheme
+copied from someday/maybe:
+Here is the idea/scheme:
+One central key is used to encrypt/decrypt everything
+that central key is *itself* encrypted multiple times
+1. one is with my own day-to-day password
+2. another is with some other key, which is maybe on a thumb drive
+   somewhere.
+3. another is with one of those stupid
+   password-recovery-answer-questions-type-things.
 ** TODO remove site-cookbooks/dmg
    IIRC this is was added in an attempt to understand things
    better/remove some frustration, but I think this really should just
@@ -279,7 +292,7 @@ VBoxManage controlvm mavericks-test poweroff
   Backups sent to s3 for now (bucket: jnm-private)
 * README.md
 
-The README is a starting point, so some basics are provided.
+The README is a starting point, so some absolute basics are provided.
 
 #+BEGIN_SRC markdown :tangle ./README.md
   # Dotfiles
@@ -296,6 +309,7 @@ The README is a starting point, so some basics are provided.
 
   - ~./bin/install-chef-standalone.sh~ installs chef via omnibus
     installer.
+  - ~./bin/bootstrap.sh~ runs special bootstrap recipes.
   - ~./bin/get-cookbooks.sh~ gets cookbooks managed by librarian-chef.
   - ~./bin/run-chef.sh~ runs chef and converges the system.
 
@@ -304,9 +318,7 @@ The README is a starting point, so some basics are provided.
   environmental issues. This bit of code sets things up for chef:
 #+NAME: reset-environment
 #+BEGIN_SRC sh
-  # necessary for the chef-version of ruby not to
-  # be confused about locations of files,
-  # at least on my system. YMMV
+  # Make sure chef ruby uses own gem directories
   unset GEM_HOME
   unset GEM_PATH
 
