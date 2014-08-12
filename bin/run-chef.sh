@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 # include reset environment code
 # necessary for the chef-version of ruby not to
 # be confused about locations of files,
