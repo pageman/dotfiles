@@ -240,14 +240,12 @@ VBoxManage controlvm mavericks-test poweroff
 * Things that need to be done
 ** TODO separate this file into several smaller files
 ** TODO remove secret_source code duplication
-** TODO determine if rvm hacks are still necessary
-*** if so: add a "chef-env" script that runs other scripts in the chef reset environment
+** TODO refactor rests to "chef-env" script that runs other scripts in reset environment
     e.g. something like
     set all the env vars
     set path
     exec "$@"
     etc
-    (old) note: in bash bypass rvm gem function with 'command' builtin
 ** TODO write backup script
 *** should send to s3
 ** TODO omnifocus
