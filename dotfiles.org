@@ -310,11 +310,13 @@ The README is a starting point, so some absolute basics are provided.
   - ~./bin/get-cookbooks.sh~ gets cookbooks managed by librarian-chef.
   - ~./bin/run-chef.sh~ runs chef and converges the system.
 
-** Resetting environment because of RVM
-  I still use RVM. Thus, I have to occasionally deal with irritating
-  environmental issues. This bit of code sets things up for chef:
-#+NAME: reset-environment
-#+BEGIN_SRC sh
+** omnibus-env script
+   This script acts as a wrapper for running chef commands. It sets up
+   the environment necessary for the chef omnibus env script. It might
+   not be necessary, but if the environment is messed up (*cough* RVM
+   *cough*) there will be problems.
+
+#+BEGIN_SRC sh :tangle ./bin/omnibus-env :shebang "#!/bin/bash" :noweb yes
   # Make sure chef ruby uses own gem directories
   unset GEM_HOME
   unset GEM_PATH
@@ -322,14 +324,6 @@ The README is a starting point, so some absolute basics are provided.
   # make sure to put the omnibus-installed version of chef at
   # the front of the path
   PATH="/opt/chef/bin:/opt/chef/embedded/bin:$PATH"
-#+END_SRC
-
-** chef-run script
-This is an experimental script. I hope it will make it easier to use
-the embedded chef.
-
-#+BEGIN_SRC sh :tangle ./bin/chef-env-run.sh :shebang "#!/bin/bash" :noweb yes
-  <<reset-environment>>
 
   exec "$@"
 #+END_SRC
@@ -362,45 +356,31 @@ http://distinctplace.com/infrastructure/2013/08/04/secure-data-bag-items-with-ch
 
 ** Fetch Cookbooks
 #+BEGIN_SRC sh :tangle ./bin/get-cookbooks.sh :shebang "#!/bin/bash" :noweb yes
-  # include reset environment code
-  <<reset-environment>>
-
   # absolute paths to executables
   # are used to avoid problems with RVM.
   /opt/chef/embedded/bin/librarian-chef install --verbose
 #+END_SRC
-
 ** Bootstrap the system
 #+BEGIN_SRC fundamental :tangle ./bin/bootstrap.sh :shebang "#!/bin/bash" :noweb yes
   set -e
 
-  # include reset environment code
-  <<reset-environment>>
-
   if [[ "$EDB_SECRET" != "" && -f "$EDB_SECRET" ]]; then
     ln -s "$EDB_SECRET" ./encrypted_data_bag_secret
   fi
 
   /opt/chef/bin/chef-solo -c solo.rb -j bootstrap.json $@
   chown -R $SUDO_USER:staff ./*
-
+#+END_SRC
 ** Converge the system
 #+BEGIN_SRC fundamental :tangle ./bin/run-chef.sh :shebang "#!/bin/bash" :noweb yes
   set -e
 
-  # include reset environment code
-  <<reset-environment>>
-
   if [[ "$EDB_SECRET" != "" && -f "$EDB_SECRET" ]]; then
     ln -s "$EDB_SECRET" ./encrypted_data_bag_secret
   fi
 
-  /opt/chef/bin/chef-solo -c solo.rb -j bootstrap.json $@
-
-  /opt/chef/embedded/bin/librarian-chef install --verbose
   /opt/chef/bin/chef-solo -c solo.rb -j solo.json $@
   chown -R $SUDO_USER:staff ./*
-
 #+END_SRC
 ** Running Tests
 #+BEGIN_SRC sh :tangle ./bin/run-tests.sh :shebang "#!/bin/bash" :noweb yes
