@@ -91,16 +91,6 @@ go anywhere, and can thus be specified via the environment variable
 
    Remove the encrypted data bag secret from its original location.
    It should now be moved to its final destination in ~\~/var/secrets~.
-* Problem: need to install gcc/xcode tools
-  I tried a few things:
-  first of all, i tried to download the dmg from apple's site
-  that proved to be really hard.
-
-  I also tried  using the ~xcode-select --install~ command. this was a
-  problem because it requires UI interaction, and afaict there was no
-  good way to fix this
-
-  now, I am hosting the dmg on my own server.
 * Preparing a Mavericks VM for Testing
 I would love to make this entire process automated, but I don't think
 that is possible.
@@ -232,11 +222,6 @@ VBoxManage startvm mavericks-test
 VBoxManage controlvm mavericks-test poweroff
 #+END_SRC
 
-* Notes from first run in VM
-** permissions got out of wack
-** should move gem installation to the process of installing chef
-** gcc wasn't installed by default -- would really like to script that.
-** need to move private data into place, esp last password pw hashed
 * Things that need to be done
 ** TODO separate this file into several smaller files
 ** TODO remove secret_source code duplication
@@ -280,6 +265,9 @@ that central key is *itself* encrypted multiple times
    but I can't see why that would be the case.
 ** TODO use an integration-test branch specific to integ. testing
    that way can keep master cleaner for things I am trying to do.
+** TODO add tests for:
+*** Firefox
+*** standard ruby installation
 * Other External Services I Use
   I think this needs to be mentioned
   - read later
@@ -1265,7 +1253,8 @@ ssh_do "echo testuser | sudo -S dotfiles/bin/toggle-sudo-nopassword off"
   tmp
   chef-client-running.pid
 #+END_SRC
-* More Resources
-http://gettingstartedwithchef.com/first-steps-with-chef.html
-http://docs.opscode.com/install_omnibus.html
-http://www.getchef.com/chef/install/
+* Development
+** Requirements
+*** Rake
+*** Emacs
+*** Org-mode
