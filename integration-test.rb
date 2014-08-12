@@ -23,7 +23,7 @@ puts "delete old vm if it exists."
 system "VBoxManage unregistervm mavericks-test --delete"
 
 puts "import VM..."
-system "VBoxManage import ~/Documents/new/mavericks-base-ssh-enabled.ova"
+system "VBoxManage import ~/Documents/mavericks-base-ssh-enabled.ova"
 
 puts "set up NAT for ssh."
 system "VBoxManage modifyvm mavericks-test --natpf1 'guestssh,tcp,,3333,,22'"
@@ -33,6 +33,10 @@ system "VBoxManage startvm mavericks-test"
 
 puts "Sleep for 10 seconds while VM boots.."
 sleep 10
+
+# change the permissions for the vm private key
+# required for ssh/scp below
+system "chmod 0600 misc/vagrant_private_key"
 
 puts "copy secret key to vm."
 system "scp #{ssh_opts} -P 3333 ~/var/secrets/encrypted_data_bag_secret testuser@localhost:~"
