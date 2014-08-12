@@ -239,7 +239,6 @@ VBoxManage controlvm mavericks-test poweroff
 ** need to move private data into place, esp last password pw hashed
 * Things that need to be done
 ** TODO separate this file into several smaller files
-** TODO remove bootstrap running from "normal" chef convergence script
 ** TODO remove secret_source code duplication
 ** TODO determine if rvm hacks are still necessary
 *** if so: add a "chef-env" script that runs other scripts in the chef reset environment
@@ -372,6 +371,21 @@ http://distinctplace.com/infrastructure/2013/08/04/secure-data-bag-items-with-ch
   # are used to avoid problems with RVM.
   /opt/chef/embedded/bin/librarian-chef install --verbose
 #+END_SRC
+
+** Bootstrap the system
+#+BEGIN_SRC fundamental :tangle ./bin/bootstrap.sh :shebang "#!/bin/bash" :noweb yes
+  set -e
+
+  # include reset environment code
+  <<reset-environment>>
+
+  if [[ "$EDB_SECRET" != "" && -f "$EDB_SECRET" ]]; then
+    ln -s "$EDB_SECRET" ./encrypted_data_bag_secret
+  fi
+
+  /opt/chef/bin/chef-solo -c solo.rb -j bootstrap.json $@
+  chown -R $SUDO_USER:staff ./*
+
 ** Converge the system
 #+BEGIN_SRC fundamental :tangle ./bin/run-chef.sh :shebang "#!/bin/bash" :noweb yes
   set -e

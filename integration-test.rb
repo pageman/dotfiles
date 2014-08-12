@@ -53,6 +53,10 @@ ssh_do "cd ~/dotfiles; DOTFILES_TEST=true ./bin/install-chef-standalone.sh"
 puts "enable sudo nopassword."
 ssh_do "echo testuser | sudo -S dotfiles/bin/toggle-sudo-nopassword on"
 
+puts "run chef bootstrap."
+ssh_do "cd dotfiles; echo testuser | sudo -S bash -c \"EDB_SECRET=~/encrypted_data_bag_secret bin/bootstrap.sh\""
+
+
 puts "run chef."
 ssh_do "cd dotfiles; echo testuser | sudo -S bash -c \"EDB_SECRET=~/encrypted_data_bag_secret bin/run-chef.sh\""
 
