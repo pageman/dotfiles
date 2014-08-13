@@ -358,6 +358,8 @@ http://distinctplace.com/infrastructure/2013/08/04/secure-data-bag-items-with-ch
 
   /opt/chef/bin/chef-solo -c solo.rb -j bootstrap.json $@
   chown -R $SUDO_USER:staff ./*
+
+  /opt/chef/embedded/bin/librarian-chef install --verbose
 #+END_SRC
 ** Converge the system
 #+BEGIN_SRC fundamental :tangle ./bin/run-chef.sh :shebang "#!/bin/bash" :noweb yes
