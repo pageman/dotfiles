@@ -235,9 +235,7 @@ VBoxManage controlvm mavericks-test poweroff
 ** TODO upgrade to newest versions of pivotal sprout recipes
 ** TODO extract shadow_directory to its own cookbook
 ** TODO extract firefox_profile to its own cookbook
-** TODO create a rake task for tangling dotfiles.org
-   also going to need tangling for other files when this file is split
-   would like to have this publishable
+** TODO build a web interface for these files
 ** TODO document any other manual things, if there are any
 ** TODO add the complicated ssh cmd args to ssh hosts file
 ** TODO work on my dual encryption scheme
