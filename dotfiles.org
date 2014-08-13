@@ -225,12 +225,6 @@ VBoxManage controlvm mavericks-test poweroff
 * Things that need to be done
 ** TODO separate this file into several smaller files
 ** TODO remove secret_source code duplication
-** TODO refactor rests to "chef-env" script that runs other scripts in reset environment
-    e.g. something like
-    set all the env vars
-    set path
-    exec "$@"
-    etc
 ** TODO write backup script
 *** should send to s3
 ** TODO omnifocus
@@ -239,7 +233,6 @@ VBoxManage controlvm mavericks-test poweroff
 ** TODO virtual box
 ** TODO vagrant
 ** TODO upgrade to newest versions of pivotal sprout recipes
-** TODO move installation of librarian chef gem to installation of chef
 ** TODO extract shadow_directory to its own cookbook
 ** TODO extract firefox_profile to its own cookbook
 ** TODO create a rake task for tangling dotfiles.org
