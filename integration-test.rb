@@ -45,7 +45,7 @@ puts "get install.sh."
 ssh_do "curl -LO https://raw.githubusercontent.com/joelmccracken/dotfiles/integration-test/install.sh"
 
 puts "run install.sh."
-ssh_do "bash install.sh"
+ssh_do "bash install.sh integration-test"
 
 puts "run chef installer."
 ssh_do "cd ~/dotfiles; DOTFILES_TEST=true bin/omnibus-env ./bin/install-chef-standalone.sh"
