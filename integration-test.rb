@@ -42,7 +42,7 @@ puts "copy secret key to vm."
 system "scp #{ssh_opts} -P 3333 ~/var/secrets/encrypted_data_bag_secret testuser@localhost:~"
 
 puts "get install.sh."
-ssh_do "curl -LO https://raw.githubusercontent.com/joelmccracken/dotfiles/master/install.sh"
+ssh_do "curl -LO https://raw.githubusercontent.com/joelmccracken/dotfiles/integration-test/install.sh"
 
 puts "run install.sh."
 ssh_do "bash install.sh"
