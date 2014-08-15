@@ -19,14 +19,13 @@ if [ -d "$dotfiles_dir" ]; then
     exit 1
 fi
 
-option=$1
 tmpdir=`mktemp -d /tmp/install-dotfiles.XXXX`
 
 debug $tmpdir
 
 cd $tmpdir
 
-curl -LO https://github.com/joelmccracken/dotfiles/archive/master.zip
+curl -LO https://github.com/joelmccracken/dotfiles/archive/${1:-master}.zip
 
 unzip master.zip
 
