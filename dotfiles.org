@@ -483,9 +483,6 @@ This piece should:
   end
 #+END_SRC
 
-#+BEGIN_SRC ruby :noweb yes :tangle ./site-cookbooks/personal/libraries/secret_source.rb
-<<secret-source>>
-#+END_SRC
 *** The "Inbox" Shadow directory
 #+NAME: inbox
 #+BEGIN_SRC ruby
@@ -814,6 +811,7 @@ default['username'] = 'joel'
   version          '0.1.0'
 
 
+  depends "bootstrap"
   depends "shadow_directory"
   depends "sprout-osx-base"
 #+END_SRC
