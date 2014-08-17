@@ -32,7 +32,7 @@ unzip ${1:-master}.zip
 debug successfully unzipped
 
 
-mv dotfiles-master $dotfiles_dir
+mv dotfiles-${1:-master} $dotfiles_dir
 
 
 echo Done! You are now ready to run the chef installer.
