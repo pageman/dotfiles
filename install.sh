@@ -27,7 +27,7 @@ cd $tmpdir
 
 curl -LO https://github.com/joelmccracken/dotfiles/archive/${1:-master}.zip
 
-unzip master.zip
+unzip ${1:-master}.zip
 
 debug successfully unzipped
 
