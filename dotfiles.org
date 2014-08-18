@@ -257,7 +257,7 @@ that central key is *itself* encrypted multiple times
 ** TODO use an integration-test branch specific to integ. testing
    that way can keep master cleaner for things I am trying to do.
 ** TODO add tests for:
-*** Firefox
+*** Firefox (esp connect to mozrepl, etc)
 *** standard ruby installation
 * Other External Services I Use
   I think this needs to be mentioned
