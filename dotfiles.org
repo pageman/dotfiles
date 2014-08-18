@@ -49,21 +49,20 @@ The source for that install script:
       exit 1
   fi
 
-  option=$1
   tmpdir=`mktemp -d /tmp/install-dotfiles.XXXX`
 
   debug $tmpdir
 
   cd $tmpdir
 
-  curl -LO https://github.com/joelmccracken/dotfiles/archive/master.zip
+  curl -LO https://github.com/joelmccracken/dotfiles/archive/${1:-master}.zip
 
-  unzip master.zip
+  unzip ${1:-master}.zip
 
   debug successfully unzipped
 
 
-  mv dotfiles-master $dotfiles_dir
+  mv dotfiles-${1:-master} $dotfiles_dir
 
 
   echo Done! You are now ready to run the chef installer.
@@ -776,8 +775,9 @@ The file ~site-cookbooks/personal/providers/firefox_profile.rb~:
 *** Miscellaneous Software
 #+name: misc-software
 #+BEGIN_SRC ruby
-  brew "ruby"
-  brew "git"
+  package "ruby"
+  package "git"
+
 #+END_SRC
 *** The Combined Recipe
 #+BEGIN_SRC ruby :noweb yes :tangle ./site-cookbooks/personal/recipes/default.rb
@@ -810,10 +810,9 @@ default['username'] = 'joel'
   long_description "Installs my personal configuration"
   version          '0.1.0'
 
-
   depends "bootstrap"
   depends "shadow_directory"
-  depends "sprout-osx-base"
+  depends "sprout-homebrew"
 #+END_SRC
 
 ** Shadow Directory
@@ -1050,38 +1049,46 @@ default['username'] = 'joel'
 ** The Cheffile:
 #+BEGIN_SRC ruby :tangle ./Cheffile
   # -*- mode: ruby -*-
+  site 'https://supermarket.getchef.com/api/v1'
 
-  site 'http://community.opscode.com/api/v1'
+  cookbook 'sprout-rbenv',
+    :github => 'pivotal-sprout/sprout-rbenv'
 
-  cookbook 'sprout-osx-base',
-    :git => 'git://github.com/pivotal-sprout/sprout.git',
-    :ref => 'mountain-lion',
-    :path => 'sprout-osx-base'
+  cookbook 'sprout-ruby',
+    :github => 'pivotal-sprout/sprout-ruby'
 
-  cookbook 'pivotal_workstation',
-    :git => 'git://github.com/pivotal-sprout/sprout.git',
-    :ref => 'mountain-lion',
-    :path => 'pivotal_workstation'
+  cookbook 'sprout-mysql',
+    :github => 'pivotal-sprout/sprout-mysql'
+
+  cookbook 'sprout-git',
+    :github => 'pivotal-sprout/sprout-git'
+
+  cookbook 'sprout-base',
+    :github => 'pivotal-sprout/sprout-base'
 
   cookbook 'sprout-osx-apps',
-    :git => 'git://github.com/pivotal-sprout/sprout.git',
-    :ref => 'mountain-lion',
-    :path => 'sprout-osx-apps'
+    :github => 'pivotal-sprout/sprout-osx-apps'
 
   cookbook 'sprout-osx-settings',
-    :git => 'git://github.com/pivotal-sprout/sprout.git',
-    :ref => 'mountain-lion',
-    :path => 'sprout-osx-settings'
-
-  cookbook 'sprout-pivotal',
-    :git => 'git://github.com/pivotal-sprout/sprout.git',
-    :ref => 'mountain-lion',
-    :path => 'sprout-pivotal'
+    :github => 'pivotal-sprout/sprout-osx-settings'
 
   cookbook 'osx',
-    :git => 'git://github.com/pivotal-sprout/sprout.git',
-    :ref => 'mountain-lion',
-    :path => 'osx'
+    :github => 'pivotal-sprout/osx'
+
+  cookbook 'sprout-rubymine',
+    :github => 'pivotal-sprout/sprout-rubymine'
+
+  cookbook 'sprout-homebrew',
+    :github => 'pivotal-sprout/sprout-homebrew'
+
+  cookbook 'sprout-terminal',
+    :github => 'pivotal-sprout/sprout-terminal'
+
+  cookbook 'sprout-postgresql',
+    :github => 'pivotal-sprout/sprout-postgresql'
+
+  cookbook 'sprout-ssh',
+    :github => 'pivotal-sprout/sprout-ssh'
 #+END_SRC
 * Chef Solo Support Files
 
@@ -1117,7 +1124,10 @@ used in the ~personal~ recipe.
   {
     "firefox_bin": "/Applications/Firefox.app/Contents/MacOS/firefox-bin",
     "run_list": [
-      "recipe[sprout-osx-base::homebrew]",
+      "recipe[sprout-base]",
+      "recipe[sprout-base::bash_it]",
+      "recipe[sprout-base::homebrew]",
+      "recipe[sprout-homebrew]",
       "recipe[sprout-osx-apps::emacs]",
       "recipe[sprout-osx-apps::firefox]",
       "recipe[sprout-osx-apps::flux]",
@@ -1164,67 +1174,71 @@ state.
 integration test:
 #+BEGIN_SRC ruby :tangle ./integration-test.rb :shebang "#!/usr/bin/env ruby"
 
-def ssh_opts
-  %Q{ -i ./misc/vagrant_private_key -o "StrictHostKeyChecking no" \
-      -o "UserKnownHostsFile /dev/null" \
-      -o "PasswordAuthentication yes"}
-end
+  def use_branch
+    ARGV[0] || "master"
+  end
 
-def ssh_cmd
-  %Q{ssh #{ssh_opts} -p 3333 testuser@localhost}
-end
+  def ssh_opts
+    %Q{ -i ./misc/vagrant_private_key -o "StrictHostKeyChecking no" \
+        -o "UserKnownHostsFile /dev/null" \
+        -o "PasswordAuthentication yes"}
+  end
 
-def ssh_do cmd
-  cmd = "#{ssh_cmd} '#{cmd}'"
-  puts "running #{cmd}"
-  system cmd
-end
+  def ssh_cmd
+    %Q{ssh #{ssh_opts} -p 3333 testuser@localhost}
+  end
 
-puts "stop old vm if it is started."
-system "VBoxManage controlvm mavericks-test poweroff"
+  def ssh_do cmd
+    cmd = "#{ssh_cmd} '#{cmd}'"
+    puts "running #{cmd}"
+    system cmd
+  end
 
-puts "delete old vm if it exists."
-system "VBoxManage unregistervm mavericks-test --delete"
+  puts "stop old vm if it is started."
+  system "VBoxManage controlvm mavericks-test poweroff"
 
-puts "import VM..."
-system "VBoxManage import ~/Documents/mavericks-base-ssh-enabled.ova"
+  puts "delete old vm if it exists."
+  system "VBoxManage unregistervm mavericks-test --delete"
 
-puts "set up NAT for ssh."
-system "VBoxManage modifyvm mavericks-test --natpf1 'guestssh,tcp,,3333,,22'"
+  puts "import VM..."
+  system "VBoxManage import ~/Documents/mavericks-base-ssh-enabled.ova"
 
-puts "start VM."
-system "VBoxManage startvm mavericks-test"
+  puts "set up NAT for ssh."
+  system "VBoxManage modifyvm mavericks-test --natpf1 'guestssh,tcp,,3333,,22'"
 
-puts "Sleep for 10 seconds while VM boots.."
-sleep 10
+  puts "start VM."
+  system "VBoxManage startvm mavericks-test"
 
-# change the permissions for the vm private key
-# required for ssh/scp below
-system "chmod 0600 misc/vagrant_private_key"
+  puts "Sleep for 10 seconds while VM boots.."
+  sleep 10
 
-puts "copy secret key to vm."
-system "scp #{ssh_opts} -P 3333 ~/var/secrets/encrypted_data_bag_secret testuser@localhost:~"
+  # change the permissions for the vm private key
+  # required for ssh/scp below
+  system "chmod 0600 misc/vagrant_private_key"
 
-puts "get install.sh."
-ssh_do "curl -LO https://raw.githubusercontent.com/joelmccracken/dotfiles/master/install.sh"
+  puts "copy secret key to vm."
+  system "scp #{ssh_opts} -P 3333 ~/var/secrets/encrypted_data_bag_secret testuser@localhost:~"
 
-puts "run install.sh."
-ssh_do "bash install.sh"
+  puts "get install.sh."
+  ssh_do "curl -LO https://raw.githubusercontent.com/joelmccracken/dotfiles/#{use_branch}/install.sh"
 
-puts "run chef installer."
-ssh_do "cd ~/dotfiles; DOTFILES_TEST=true bin/omnibus-env ./bin/install-chef-standalone.sh"
+  puts "run install.sh."
+  ssh_do "bash install.sh #{use_branch}"
 
-puts "enable sudo nopassword."
-ssh_do "echo testuser | sudo -S dotfiles/bin/toggle-sudo-nopassword on"
+  puts "run chef installer."
+  ssh_do "cd ~/dotfiles; DOTFILES_TEST=true bin/omnibus-env ./bin/install-chef-standalone.sh"
 
-puts "run chef bootstrap."
-ssh_do "cd dotfiles; echo testuser | sudo -S bash -c \"EDB_SECRET=~/encrypted_data_bag_secret bin/omnibus-env bin/bootstrap.sh\""
+  puts "enable sudo nopassword."
+  ssh_do "echo testuser | sudo -S dotfiles/bin/toggle-sudo-nopassword on"
 
-puts "run chef."
-ssh_do "cd dotfiles; echo testuser | sudo -S bash -c \"EDB_SECRET=~/encrypted_data_bag_secret bin/omnibus-env bin/run-chef.sh\""
+  puts "run chef bootstrap."
+  ssh_do "cd dotfiles; echo testuser | sudo -S bash -c \"EDB_SECRET=~/encrypted_data_bag_secret bin/omnibus-env bin/bootstrap.sh\""
 
-puts "disable sudo nopassword."
-ssh_do "echo testuser | sudo -S dotfiles/bin/toggle-sudo-nopassword off"
+  puts "run chef."
+  ssh_do "cd dotfiles; echo testuser | sudo -S bash -c \"EDB_SECRET=~/encrypted_data_bag_secret bin/omnibus-env bin/run-chef.sh\""
+
+  puts "disable sudo nopassword."
+  ssh_do "echo testuser | sudo -S dotfiles/bin/toggle-sudo-nopassword off"
 #+END_SRC
 * Miscellaneous
 ** ~.gitignore~
