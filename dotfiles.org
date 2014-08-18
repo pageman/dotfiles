@@ -1051,6 +1051,8 @@ default['username'] = 'joel'
   # -*- mode: ruby -*-
   site 'https://supermarket.getchef.com/api/v1'
 
+  cookbook 'dmg'
+
   cookbook 'sprout-rbenv',
     :github => 'pivotal-sprout/sprout-rbenv'
 

@@ -119,6 +119,7 @@ GIT
       sprout-base (>= 0.0.0)
 
 DEPENDENCIES
+  dmg (>= 0)
   osx (>= 0)
   sprout-base (>= 0)
   sprout-git (>= 0)
