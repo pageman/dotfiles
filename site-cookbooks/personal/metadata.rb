@@ -9,4 +9,4 @@ version          '0.1.0'
 
 depends "bootstrap"
 depends "shadow_directory"
-depends "sprout-osx-base"
+depends "sprout-homebrew"

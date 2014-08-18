@@ -96,5 +96,5 @@ personal_firefox_profile "Personal" do
         ]
 
 end
-brew "ruby"
-brew "git"
+package "ruby"
+package "git"
