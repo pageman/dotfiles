@@ -1,5 +1,9 @@
 #!/usr/bin/env ruby
 
+def use_branch
+  ARGV[0] || "master"
+end
+
 def ssh_opts
   %Q{ -i ./misc/vagrant_private_key -o "StrictHostKeyChecking no" \
       -o "UserKnownHostsFile /dev/null" \
@@ -42,10 +46,10 @@ puts "copy secret key to vm."
 system "scp #{ssh_opts} -P 3333 ~/var/secrets/encrypted_data_bag_secret testuser@localhost:~"
 
 puts "get install.sh."
-ssh_do "curl -LO https://raw.githubusercontent.com/joelmccracken/dotfiles/integration-test/install.sh"
+ssh_do "curl -LO https://raw.githubusercontent.com/joelmccracken/dotfiles/#{use_branch}/install.sh"
 
 puts "run install.sh."
-ssh_do "bash install.sh integration-test"
+ssh_do "bash install.sh #{use_branch}"
 
 puts "run chef installer."
 ssh_do "cd ~/dotfiles; DOTFILES_TEST=true bin/omnibus-env ./bin/install-chef-standalone.sh"
