@@ -246,8 +246,6 @@ that central key is *itself* encrypted multiple times
    somewhere.
 3. another is with one of those stupid
    password-recovery-answer-questions-type-things.
-** TODO use an integration-test branch specific to integ. testing
-   that way can keep master cleaner for things I am trying to do.
 ** TODO add tests for:
 *** Firefox (esp connect to mozrepl, etc)
 *** standard ruby installation
