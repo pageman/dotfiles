@@ -246,12 +246,6 @@ that central key is *itself* encrypted multiple times
    somewhere.
 3. another is with one of those stupid
    password-recovery-answer-questions-type-things.
-** TODO remove site-cookbooks/dmg
-   IIRC this is was added in an attempt to understand things
-   better/remove some frustration, but I think this really should just
-   be installed through librarian-chef. The only reason I could see is
-   because bootstrap might need to run before librarian-chef is run,
-   but I can't see why that would be the case.
 ** TODO use an integration-test branch specific to integ. testing
    that way can keep master cleaner for things I am trying to do.
 ** TODO add tests for:
@@ -368,6 +362,10 @@ http://distinctplace.com/infrastructure/2013/08/04/secure-data-bag-items-with-ch
 * Cookbooks
   The meat of this project rests in the cookbooks.
   The rest is just bookkeeping.
+** DMG
+   This cookbook is included manually (as opposed to with the
+   Cheffile) because it is required for installation of XCode, which
+   is required for librarian-chef.
 ** Bootstrap
    The bootstrap cookbook does early/high level bootstrapping
    work. This work needs to happen prior to other scripts being run
