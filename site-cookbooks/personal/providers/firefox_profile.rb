@@ -6,6 +6,10 @@ require 'rexml/document'
 
 include Chef::Mixin::ShellOut
 
+def firefox_bin
+  ::File.expand_path node[:firefox_bin]
+end
+
 action :install do
 
   # manually adding extensions to a firefox profile is a very tricky
@@ -15,7 +19,7 @@ action :install do
 
   unless new_resource.location_exists?
     cmd = <<-FX_CMD.strip
-      #{node[:firefox_bin]} -CreateProfile "#{new_resource.profile_name} #{new_resource.location}"
+      #{firefox_bin} -CreateProfile "#{new_resource.profile_name} #{new_resource.location}"
     FX_CMD
     converge_by "create a new profile with: #{cmd}" do
       shell_out!(cmd, user: new_resource.owner)
@@ -74,7 +78,7 @@ end
 def run_firefox_if_needed
   if @firefox_needs_run
     converge_by "briefly run firefox to have it set up the newly-created profile" do
-      pipe = IO.popen [node[:firefox_bin], "-P", new_resource.profile_name]
+      pipe = IO.popen [firefox_bin, "-P", new_resource.profile_name]
       sleep 5
       Process.kill 9, pipe.pid
     end

@@ -1,6 +1,6 @@
 
 {
-  "firefox_bin": "/Applications/Firefox.app/Contents/MacOS/firefox-bin",
+  "firefox_bin": "~/Applications/Firefox.app/Contents/MacOS/firefox-bin",
   "run_list": [
     "recipe[sprout-base]",
     "recipe[sprout-base::bash_it]",
