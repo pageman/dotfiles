@@ -1125,6 +1125,7 @@ used in the ~personal~ recipe.
       "recipe[sprout-base::bash_it]",
       "recipe[sprout-base::homebrew]",
       "recipe[sprout-homebrew]",
+      "recipe[sprout-homebrew::cask]",
       "recipe[sprout-osx-apps::virtualbox]",
       "recipe[sprout-osx-apps::vagrant]",
       "recipe[sprout-osx-apps::dropbox]",
