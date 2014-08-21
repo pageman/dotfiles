@@ -7,8 +7,6 @@
     "recipe[sprout-base::homebrew]",
     "recipe[sprout-homebrew]",
     "recipe[sprout-homebrew::cask]",
-    "recipe[sprout-osx-apps::virtualbox]",
-    "recipe[sprout-osx-apps::vagrant]",
     "recipe[sprout-osx-apps::dropbox]",
     "recipe[sprout-osx-apps::evernote]",
     "recipe[sprout-osx-apps::emacs]",
