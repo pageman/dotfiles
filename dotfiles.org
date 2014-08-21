@@ -227,8 +227,6 @@ VBoxManage controlvm mavericks-test poweroff
 ** TODO write backup script
 *** should send to s3
 ** TODO omnifocus
-** TODO evernote
-** TODO dropbox
 ** TODO virtual box
 ** TODO vagrant
 ** TODO extract shadow_directory to its own cookbook
@@ -624,6 +622,10 @@ The file ~site-cookbooks/personal/providers/firefox_profile.rb~:
 
   include Chef::Mixin::ShellOut
 
+  def firefox_bin
+    ::File.expand_path node[:firefox_bin]
+  end
+
   action :install do
 
     # manually adding extensions to a firefox profile is a very tricky
@@ -633,7 +635,7 @@ The file ~site-cookbooks/personal/providers/firefox_profile.rb~:
 
     unless new_resource.location_exists?
       cmd = <<-FX_CMD.strip
-        #{node[:firefox_bin]} -CreateProfile "#{new_resource.profile_name} #{new_resource.location}"
+        #{firefox_bin} -CreateProfile "#{new_resource.profile_name} #{new_resource.location}"
       FX_CMD
       converge_by "create a new profile with: #{cmd}" do
         shell_out!(cmd, user: new_resource.owner)
@@ -692,7 +694,7 @@ The file ~site-cookbooks/personal/providers/firefox_profile.rb~:
   def run_firefox_if_needed
     if @firefox_needs_run
       converge_by "briefly run firefox to have it set up the newly-created profile" do
-        pipe = IO.popen [node[:firefox_bin], "-P", new_resource.profile_name]
+        pipe = IO.popen [firefox_bin, "-P", new_resource.profile_name]
         sleep 5
         Process.kill 9, pipe.pid
       end
@@ -1119,15 +1121,13 @@ used in the ~personal~ recipe.
 
 #+BEGIN_SRC js :tangle ./solo.json
   {
-    "firefox_bin": "/Applications/Firefox.app/Contents/MacOS/firefox-bin",
+    "firefox_bin": "~/Applications/Firefox.app/Contents/MacOS/firefox-bin",
     "run_list": [
       "recipe[sprout-base]",
       "recipe[sprout-base::bash_it]",
       "recipe[sprout-base::homebrew]",
       "recipe[sprout-homebrew]",
       "recipe[sprout-homebrew::cask]",
-      "recipe[sprout-osx-apps::virtualbox]",
-      "recipe[sprout-osx-apps::vagrant]",
       "recipe[sprout-osx-apps::dropbox]",
       "recipe[sprout-osx-apps::evernote]",
       "recipe[sprout-osx-apps::emacs]",
