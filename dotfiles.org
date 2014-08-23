@@ -821,6 +821,7 @@ default['username'] = 'joel'
   depends "bootstrap"
   depends "shadow_directory"
   depends "sprout-homebrew"
+  depends "sprout-osx-apps"
 #+END_SRC
 
 ** Shadow Directory
