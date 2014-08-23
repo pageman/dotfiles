@@ -56,6 +56,20 @@ shadow_directory "Downloads -> Inbox" do
   group   "staff"
 end
 
+package "ruby"
+package "git"
+
+include_recipe "sprout-osx-apps::dropbox"
+include_recipe "sprout-osx-apps::evernote"
+include_recipe "sprout-osx-apps::emacs"
+include_recipe "sprout-osx-apps::firefox"
+include_recipe "sprout-osx-apps::flux"
+
+unless ENV["INTEGRATION_TEST"] == "true"
+  include_recipe "sprout-osx-apps::virtualbox"
+  include_recipe "sprout-osx-apps::vagrant"
+end
+
 expand_file = ->(name){
   ::File.expand_path ::File.join(__FILE__, "../../files/default", name)
 }
@@ -95,17 +109,4 @@ personal_firefox_profile "Personal" do
          '"user_pref("extensions.lastpass.loginusers", "mccracken.joel%40gmail.com")',
         ]
 
-end
-package "ruby"
-package "git"
-
-include_recipe "sprout-osx-apps::dropbox"
-include_recipe "sprout-osx-apps::evernote"
-include_recipe "sprout-osx-apps::emacs"
-include_recipe "sprout-osx-apps::firefox"
-include_recipe "sprout-osx-apps::flux"
-
-unless ENV["INTEGRATION_TEST"] == "true"
-  include_recipe "sprout-osx-apps::virtualbox"
-  include_recipe "sprout-osx-apps::vagrant"
 end

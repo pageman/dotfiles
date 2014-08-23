@@ -800,8 +800,8 @@ The file ~site-cookbooks/personal/providers/firefox_profile.rb~:
   <<var-directories>>
   <<dotfiles-symlinks>>
   <<inbox>>
-  <<firefox-profile>>
   <<misc-software>>
+  <<firefox-profile>>
 #+END_SRC
 
 *** Misc
