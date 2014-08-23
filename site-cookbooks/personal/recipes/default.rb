@@ -98,3 +98,14 @@ personal_firefox_profile "Personal" do
 end
 package "ruby"
 package "git"
+
+include_recipe "sprout-osx-apps::dropbox"
+include_recipe "sprout-osx-apps::evernote"
+include_recipe "sprout-osx-apps::emacs"
+include_recipe "sprout-osx-apps::firefox"
+include_recipe "sprout-osx-apps::flux"
+
+unless ENV["INTEGRATION_TEST"] == "true"
+  include_recipe "sprout-osx-apps::virtualbox"
+  include_recipe "sprout-osx-apps::vagrant"
+end

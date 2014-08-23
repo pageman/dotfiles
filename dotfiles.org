@@ -775,6 +775,17 @@ The file ~site-cookbooks/personal/providers/firefox_profile.rb~:
   package "ruby"
   package "git"
 
+  include_recipe "sprout-osx-apps::dropbox"
+  include_recipe "sprout-osx-apps::evernote"
+  include_recipe "sprout-osx-apps::emacs"
+  include_recipe "sprout-osx-apps::firefox"
+  include_recipe "sprout-osx-apps::flux"
+
+  unless ENV["INTEGRATION_TEST"] == "true"
+    include_recipe "sprout-osx-apps::virtualbox"
+    include_recipe "sprout-osx-apps::vagrant"
+  end
+
 #+END_SRC
 *** The Combined Recipe
 #+BEGIN_SRC ruby :noweb yes :tangle ./site-cookbooks/personal/recipes/default.rb
@@ -1128,11 +1139,6 @@ used in the ~personal~ recipe.
       "recipe[sprout-base::homebrew]",
       "recipe[sprout-homebrew]",
       "recipe[sprout-homebrew::cask]",
-      "recipe[sprout-osx-apps::dropbox]",
-      "recipe[sprout-osx-apps::evernote]",
-      "recipe[sprout-osx-apps::emacs]",
-      "recipe[sprout-osx-apps::firefox]",
-      "recipe[sprout-osx-apps::flux]",
       "recipe[personal]"
     ]
   }
@@ -1237,7 +1243,7 @@ integration test:
   ssh_do "cd dotfiles; echo testuser | sudo -S bash -c \"EDB_SECRET=~/encrypted_data_bag_secret bin/omnibus-env bin/bootstrap.sh\""
 
   puts "run chef."
-  ssh_do "cd dotfiles; echo testuser | sudo -S bash -c \"EDB_SECRET=~/encrypted_data_bag_secret bin/omnibus-env bin/run-chef.sh\""
+  ssh_do "cd dotfiles; echo testuser | sudo -S bash -c \"EDB_SECRET=~/encrypted_data_bag_secret INTEGRATION_TEST=true bin/omnibus-env bin/run-chef.sh\""
 
   puts "disable sudo nopassword."
   ssh_do "echo testuser | sudo -S dotfiles/bin/toggle-sudo-nopassword off"
