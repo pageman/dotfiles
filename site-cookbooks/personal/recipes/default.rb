@@ -58,6 +58,7 @@ end
 
 package "ruby"
 package "git"
+package "ispell"
 
 include_recipe "sprout-osx-apps::dropbox"
 include_recipe "sprout-osx-apps::evernote"

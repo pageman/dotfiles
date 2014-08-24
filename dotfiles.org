@@ -222,7 +222,6 @@ VBoxManage controlvm mavericks-test poweroff
 #+END_SRC
 
 * Things that need to be done
-** TODO add ispell as a brew installation
 ** TODO separate this file into several smaller files
 ** TODO write backup script
 *** should send to s3
@@ -771,6 +770,7 @@ The file ~site-cookbooks/personal/providers/firefox_profile.rb~:
 #+BEGIN_SRC ruby
   package "ruby"
   package "git"
+  package "ispell"
 
   include_recipe "sprout-osx-apps::dropbox"
   include_recipe "sprout-osx-apps::evernote"
