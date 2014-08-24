@@ -779,6 +779,8 @@ The file ~site-cookbooks/personal/providers/firefox_profile.rb~:
   include_recipe "sprout-osx-apps::firefox"
   include_recipe "sprout-osx-apps::flux"
 
+  homebrew_cask "omnifocus"
+
   unless ENV["INTEGRATION_TEST"] == "true"
     include_recipe "sprout-osx-apps::virtualbox"
     include_recipe "sprout-osx-apps::vagrant"
@@ -819,6 +821,7 @@ default['username'] = 'joel'
   depends "bootstrap"
   depends "shadow_directory"
   depends "sprout-homebrew"
+  depends "homebrew"
   depends "sprout-osx-apps"
 #+END_SRC
 

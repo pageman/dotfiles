@@ -65,6 +65,8 @@ include_recipe "sprout-osx-apps::emacs"
 include_recipe "sprout-osx-apps::firefox"
 include_recipe "sprout-osx-apps::flux"
 
+homebrew_cask "omnifocus"
+
 unless ENV["INTEGRATION_TEST"] == "true"
   include_recipe "sprout-osx-apps::virtualbox"
   include_recipe "sprout-osx-apps::vagrant"

@@ -10,4 +10,5 @@ version          '0.1.0'
 depends "bootstrap"
 depends "shadow_directory"
 depends "sprout-homebrew"
+depends "homebrew"
 depends "sprout-osx-apps"
