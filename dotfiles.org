@@ -226,7 +226,6 @@ VBoxManage controlvm mavericks-test poweroff
 ** TODO separate this file into several smaller files
 ** TODO write backup script
 *** should send to s3
-** TODO omnifocus
 ** TODO extract shadow_directory to its own cookbook
 ** TODO extract firefox_profile to its own cookbook
 ** TODO build a web interface for these files
