@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-/usr/local/Cellar/ruby20/2.0.0-p481/bin/ruby "$@"
+/usr/local/Cellar/ruby/2.1.2_2/bin/ruby "$@"
