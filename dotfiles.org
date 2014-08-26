@@ -222,15 +222,17 @@ VBoxManage controlvm mavericks-test poweroff
 #+END_SRC
 
 * Things that need to be done
-** TODO separate this file into several smaller files
-** TODO write backup script
-*** should send to s3
-** TODO extract shadow_directory to its own cookbook
-** TODO extract firefox_profile to its own cookbook
-** TODO build a web interface for these files
-** TODO document any other manual things, if there are any
-** TODO add the complicated ssh cmd args to ssh hosts file
-** TODO work on my dual encryption scheme
+** necessary
+*** TODO write backup script
+**** should send to s3
+** Nice-to-have
+*** TODO separate this file into several smaller files
+*** TODO extract shadow_directory to its own cookbook
+*** TODO extract firefox_profile to its own cookbook
+*** TODO build a web interface for these files
+*** TODO document any other manual things, if there are any
+*** TODO add the complicated ssh cmd args to ssh hosts file
+*** TODO work on my dual encryption scheme
 copied from someday/maybe:
 Here is the idea/scheme:
 One central key is used to encrypt/decrypt everything
@@ -240,9 +242,10 @@ that central key is *itself* encrypted multiple times
    somewhere.
 3. another is with one of those stupid
    password-recovery-answer-questions-type-things.
-** TODO add tests for:
-*** Firefox (esp connect to mozrepl, etc)
-*** standard ruby installation
+*** TODO add tests for:
+**** Firefox (esp connect to mozrepl, etc)
+**** standard ruby installation
+
 * Other External Services I Use
   I think this needs to be mentioned
   - read later
