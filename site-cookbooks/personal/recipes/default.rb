@@ -113,3 +113,5 @@ personal_firefox_profile "Personal" do
         ]
 
 end
+
+include_recipe "personal::bash_it_symlinks"
