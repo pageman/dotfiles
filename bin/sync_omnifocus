@@ -3,5 +3,6 @@
 echo `date`: Starting Omnifocus sync >> /Users/joel/var/log/omnifocus_sync.log
 set -e
 cd /Users/joel/bin;
-osascript add_ttm_tag.applescript
+# osascript add_ttm_tag.applescript
+echo `date`: Omnifocus sync skipped >> /Users/joel/var/log/omnifocus_sync.log
 echo `date`: Omnifocus sync done >> /Users/joel/var/log/omnifocus_sync.log
