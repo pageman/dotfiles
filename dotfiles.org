@@ -425,9 +425,39 @@ http://distinctplace.com/infrastructure/2013/08/04/secure-data-bag-items-with-ch
 
    the SecretSource library:
    #+BEGIN_SRC ruby :noweb yes :tangle ./site-cookbooks/bootstrap/libraries/secret_source.rb
-     <<secret-source>>
-   #+END_SRC
+     #
+     # Secret Source
+     #
 
+     class SecretSource
+
+
+       def secret_file_location
+         @secret_file_location ||=
+           begin
+             possible_locations = ["~/var/secrets/encrypted_data_bag_secret",
+                                   ::File.join(::File.dirname(__FILE__), '../../../', 'encrypted_data_bag_secret'),
+                                  ].map {|file| ::File.expand_path(file) }
+             found = possible_locations.find { |file| ::File.exist? file }
+
+             unless found
+               raise "Could not find a secrets file. Looked for it at: #{possible_locations}"
+             end
+
+             found
+           end
+       end
+
+       def find_secret
+         @found_secret ||=
+           Chef::EncryptedDataBagItem.load_secret(secret_file_location)
+       end
+
+       def self.autofind
+         new.find_secret
+       end
+     end
+   #+END_SRC
 ** Personal
 This is where the main action of system configuration happens.
 This is going to be getting larger, so I
@@ -437,43 +467,6 @@ This piece should:
 - create any directories that are missing
 - create any symlinks to e.g. dotfiles
 - create an "inbox" shadow directory
-*** The SecretSource library
-#+NAME: secret-source
-#+BEGIN_SRC ruby
-  #
-  # Secret Source
-  #
-
-  class SecretSource
-
-
-    def secret_file_location
-      @secret_file_location ||=
-        begin
-          possible_locations = ["~/var/secrets/encrypted_data_bag_secret",
-                                ::File.join(::File.dirname(__FILE__), '../../../', 'encrypted_data_bag_secret'),
-                               ].map {|file| ::File.expand_path(file) }
-          found = possible_locations.find { |file| ::File.exist? file }
-
-          unless found
-            raise "Could not find a secrets file. Looked for it at: #{possible_locations}"
-          end
-
-          found
-        end
-    end
-
-    def find_secret
-      @found_secret ||=
-        Chef::EncryptedDataBagItem.load_secret(secret_file_location)
-    end
-
-    def self.autofind
-      new.find_secret
-    end
-  end
-#+END_SRC
-
 *** The "Inbox" Shadow directory
 #+NAME: inbox
 #+BEGIN_SRC ruby
