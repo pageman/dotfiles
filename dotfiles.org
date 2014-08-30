@@ -223,14 +223,18 @@ VBoxManage controlvm mavericks-test poweroff
 
 * Things that need to be done
 ** necessary
+*** TODO install GPG
 *** TODO write backup script
 **** should send to s3
 ** Nice-to-have
-*** TODO separate this file into several smaller files
+*** TODO automatically set up launchd script for omnifocus syncing
+*** TODO add tests for:
+**** Firefox (esp connect to mozrepl, etc)
+**** standard ruby installation
 *** TODO extract shadow_directory to its own cookbook
 *** TODO extract firefox_profile to its own cookbook
+*** TODO separate this file into several smaller files
 *** TODO build a web interface for these files
-*** TODO document any other manual things, if there are any
 *** TODO add the complicated ssh cmd args to ssh hosts file
 *** TODO work on my dual encryption scheme
 copied from someday/maybe:
@@ -242,10 +246,7 @@ that central key is *itself* encrypted multiple times
    somewhere.
 3. another is with one of those stupid
    password-recovery-answer-questions-type-things.
-*** TODO add tests for:
-**** Firefox (esp connect to mozrepl, etc)
-**** standard ruby installation
-
+*** TODO document any other manual things, if there are any
 * Other External Services I Use
   I think this needs to be mentioned
   - read later
@@ -391,7 +392,7 @@ http://distinctplace.com/infrastructure/2013/08/04/secure-data-bag-items-with-ch
    #+END_SRC
 
 
-   the default recipe:
+  the default recipe:
    #+BEGIN_SRC ruby :tangle ./site-cookbooks/bootstrap/recipes/default.rb
      #
      # install xcode
