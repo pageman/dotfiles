@@ -253,6 +253,13 @@ that central key is *itself* encrypted multiple times
   - feedly
 * Data
   Backups sent to s3 for now (bucket: jnm-private)
+  experimenting with glacier
+** working with knife solo data bags
+to show the contents of the data bag:
+~bin/omnibus-env knife solo data bag show default default --secret-file ~/var/secrets/encrypted_data_bag_secret.backup~
+
+Notice that the name is "default default". It just took me 20 mins to
+re-figure this out.
 * README.md
 
 The README is a starting point, so some absolute basics are provided.
@@ -354,6 +361,9 @@ http://distinctplace.com/infrastructure/2013/08/04/secure-data-bag-items-with-ch
 #+BEGIN_SRC sh :tangle ./bin/run-tests.sh :shebang "#!/bin/bash" :noweb yes
   /opt/chef/embedded/bin/ruby test/var_directories_test.rb
 #+END_SRC
+* launchd
+  - move file run_regularly into library/launch agents
+  - launchctl load -w ~/Library/LaunchAgents/run_regularly.plist
 * Cookbooks
   The meat of this project rests in the cookbooks.
   The rest is just bookkeeping.
