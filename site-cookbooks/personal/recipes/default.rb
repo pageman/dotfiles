@@ -60,6 +60,10 @@ package "ruby"
 package "git"
 package "ispell"
 
+gem_package "backup" do
+  version '4.0.4'
+end
+
 include_recipe "sprout-osx-apps::dropbox"
 include_recipe "sprout-osx-apps::evernote"
 include_recipe "sprout-osx-apps::emacs"
