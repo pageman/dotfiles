@@ -79,6 +79,7 @@ include_recipe "sprout-osx-apps::firefox"
 include_recipe "sprout-osx-apps::flux"
 
 homebrew_cask "omnifocus"
+homebrew_cask "racket"
 
 unless ENV["INTEGRATION_TEST"] == "true"
   include_recipe "sprout-osx-apps::virtualbox"

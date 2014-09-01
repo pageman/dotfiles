@@ -821,6 +821,7 @@ The file ~site-cookbooks/personal/providers/firefox_profile.rb~:
   include_recipe "sprout-osx-apps::flux"
 
   homebrew_cask "omnifocus"
+  homebrew_cask "racket"
 
   unless ENV["INTEGRATION_TEST"] == "true"
     include_recipe "sprout-osx-apps::virtualbox"
