@@ -49,6 +49,14 @@ Dir[File.join dotfiles_dir, "profile/*"].each do |file|
   end
 end
 
+link "Backup" do
+  target_file File.join(home_dir, "Backup")
+  to File.join dotfiles_dir, "Backup"
+  action :create
+  owner "joel"
+  group "staff"
+end
+
 shadow_directory "Downloads -> Inbox" do
   replace File.expand_path("~/Downloads")
   with    File.expand_path("~/Inbox")
