@@ -258,9 +258,10 @@ that central key is *itself* encrypted multiple times
 ** working with knife solo data bags
 to show the contents of the data bag:
 ~bin/omnibus-env knife solo data bag show default default --secret-file ~/var/secrets/encrypted_data_bag_secret.backup~
-
 Notice that the name is "default default". It just took me 20 mins to
 re-figure this out.
+** backup command
+~backup perform --trigger ttm_mbp~
 * README.md
 
 The README is a starting point, so some absolute basics are provided.
