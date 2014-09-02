@@ -1,0 +1,19 @@
+# Logfile created on 2014-09-01 20:02:26 -0400 by logger.rb/44203
+2014-09-01 20:02:26.149323 dotfiles_daemon(38450) [INFO] [daemon-kit]: DaemonKit (0.3.1) booting in development mode
+2014-09-01 20:02:26.149438 dotfiles_daemon(38450) [INFO] [daemon-kit]: Setting up trap for USR1
+2014-09-01 20:02:26.149535 dotfiles_daemon(38450) [INFO] [daemon-kit]: Setting up trap for USR2
+2014-09-01 20:02:26.149644 dotfiles_daemon(38450) [INFO] [daemon-kit]: Setting up trap for HUP
+2014-09-01 20:02:26.149716 dotfiles_daemon(38450) [INFO] [daemon-kit]: Setting up trap for INT
+2014-09-01 20:02:26.149795 dotfiles_daemon(38450) [INFO] [daemon-kit]: Setting up trap for TERM
+2014-09-01 20:02:26.150036 dotfiles_daemon(38450) [INFO] [daemon-kit]: Configuring safely for exception handling
+2014-09-01 20:02:26.150993 dotfiles_daemon(38450) [INFO] [daemon-kit]: DaemonKit (0.3.1) booted, now running dotfiles_daemon
+2014-09-01 20:02:26.151064 dotfiles_daemon(38450) [INFO] dotfiles_daemon-daemon.rb:16: I'm running
+2014-09-01 20:03:57.97962 dotfiles_daemon(38514) [INFO] [daemon-kit]: DaemonKit (0.3.1) booting in development mode
+2014-09-01 20:03:57.98094 dotfiles_daemon(38514) [INFO] [daemon-kit]: Setting up trap for USR1
+2014-09-01 20:03:57.98187 dotfiles_daemon(38514) [INFO] [daemon-kit]: Setting up trap for USR2
+2014-09-01 20:03:57.98261 dotfiles_daemon(38514) [INFO] [daemon-kit]: Setting up trap for HUP
+2014-09-01 20:03:57.98328 dotfiles_daemon(38514) [INFO] [daemon-kit]: Setting up trap for INT
+2014-09-01 20:03:57.98401 dotfiles_daemon(38514) [INFO] [daemon-kit]: Setting up trap for TERM
+2014-09-01 20:03:57.98616 dotfiles_daemon(38514) [INFO] [daemon-kit]: Configuring safely for exception handling
+2014-09-01 20:03:57.99487 dotfiles_daemon(38514) [INFO] [daemon-kit]: DaemonKit (0.3.1) booted, now running dotfiles_daemon
+2014-09-01 20:03:57.99556 dotfiles_daemon(38514) [INFO] dotfiles_daemon-daemon.rb:16: I'm running
