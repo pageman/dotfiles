@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+  <dict>
+    <key>Label</key>
+    <string>dotfiles_daemon.joelmccracken.com</string>
+    <key>WorkingDirectory</key>
+    <string>/Users/joel/dotfiles/dotfiles_daemon</string>
+    <key>ProgramArguments</key>
+    <array>
+      <string>/usr/local/bin/ruby</string>
+      <string>bin/dotfiles_daemon</string>
+      <string>run</string>
+    </array>
+    <key>KeepAlive</key>
+    <true/>
+    <key>RunAtLoad</key>
+    <true/>
+    <key>StandardOutPath</key>
+    <string>log/production.log</string>
+    <key>StandardErrorPath</key>
+    <string>log/production.log</string>
+  </dict>
+</plist>

@@ -44,3 +44,17 @@ function on-branch {
         bash && \
         git checkout $original_branch
 }
+
+
+function alerts_prompt {
+    cat ~/var/alerts/number
+}
+
+function alerts {
+    cat ~/var/alerts/alerts
+}
+
+function jnm_prompt_command {
+    PS1="\n$(alerts_prompt) ${yellow}$(ruby_version_prompt) ${purple}\h ${reset_color}in ${green}\w\n${bold_cyan}$(scm_char)${green}$(scm_prompt_info) ${green}→${reset_color} "
+}
+PROMPT_COMMAND=jnm_prompt_command;
