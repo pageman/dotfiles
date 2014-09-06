@@ -13,3 +13,8 @@ cookbooks/
 cookbooks
 tmp
 chef-client-running.pid
+
+
+dotfiles_daemon/log
+Backup/log
+Backup/.data
