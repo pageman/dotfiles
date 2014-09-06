@@ -55,19 +55,20 @@ end
 
 class UpdateAlerts
   class GitRepo
-    def initialize(repo_path)
+    def initialize(repo_path, obj)
       @repo_path = repo_path
+      @obj = obj
     end
     def check
-      puts "#{self.class.name}(#{@repo_path})"
       check_stash
       check_branches
       check_dirty
     end
 
     def check_stash
-      stashes = git_cmd("stash list").split("\n")
-      puts "\tWarning: stashes in #{@repo_path}: #{stashes.join}" unless stashes.empty?
+      git_cmd("stash list").split("\n").each do |stash|
+        @obj.add_message "stash in #{@repo_path}: #{stash}"
+      end
     end
 
     def check_branches
@@ -76,16 +77,18 @@ class UpdateAlerts
         branch = filter_current_asterisk branch
         num = num_remote_branches_containing branch
         if num == 0
-          puts "\tWarning: branch #{branch} is not pushed"
+          @obj.add_message "branch in #{@repo_path} not pushed: #{branch}"
         end
       end
     end
 
     def check_dirty
       it = git_dirty_or_untracked
-      puts "\tWarning: #{it.untracked} untracked files" if it.untracked > 0
-      puts "\tWarning: #{it.unstaged} files with unstaged changes" if it.unstaged > 0
-      puts "\tWarning: #{it.staged} files with staged, uncommitted changes" if it.staged > 0
+
+
+      @obj.add_message "#{@repo_path} has untracked files (#{it.untracked})" if it.untracked > 0
+      @obj.add_message "#{@repo_path} has files with unstaged changes (#{it.unstaged})" if it.unstaged > 0
+      @obj.add_message "#{@repo_path} has files with staged, uncommitted changes (#{it.staged})" if it.staged > 0
     end
 
     def num_remote_branches_containing branch
@@ -143,18 +146,15 @@ class UpdateAlerts
 
   class IncomingDirectory
     attr_accessor :incoming_path
-    def initialize(incoming_path)
+    def initialize(incoming_path, obj)
       @incoming_path = incoming_path
+      @obj = obj
     end
     def check
       Dir.chdir(File.expand_path @incoming_path) do
-        puts "#{self.class.name}(#{@incoming_path})"
         content = Dir["*"]
-        if content.length > 0
-          puts "Warning: #{@incoming_path} not empty:"
-          content.each do |c|
-            puts "\t#{c}"
-          end
+        content.each do |c|
+          @obj.add_message "File in #{@incoming_path}: #{c}"
         end
       end
     end
@@ -183,14 +183,30 @@ class UpdateAlerts
      }]
   end
 
+  def add_message msg
+    @messages << msg
+  end
+
+  def initialize
+    @messages = []
+  end
+
   def go
     puts "detecting loose ends on system..."
+
     locations.each do |location|
       to_check = case location[:type]
-                 when :git then GitRepo.new(location[:at])
-                 when :incoming then IncomingDirectory.new(location[:at])
+                 when :git then GitRepo.new(location[:at], self)
+                 when :incoming then IncomingDirectory.new(location[:at], self)
                  end
       to_check.check
+    end
+
+    File.write(File.expand_path("~/var/alerts/number"), @messages.count)
+    File.open(File.expand_path("~/var/alerts/alerts"), "w") do |f|
+      @messages.each do |msg|
+        f.puts msg
+      end
     end
   end
 end
