@@ -35,6 +35,7 @@ Model.new(:ttm_mbp, 'the mbp I use at ttm') do
     # archive.use_sudo
     # archive.add "/path/to/a/file.rb"
     archive.add File.expand_path("~/Dropbox/")
+    archive.add File.expand_path("~/var/")
     # archive.exclude "/path/to/a/excluded_file.rb"
     # archive.exclude "/path/to/a/excluded_folder"
   end
