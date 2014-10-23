@@ -1,4 +1,8 @@
+#encoding: utf-8
 # Change this file to be a wrapper around your daemon code.
+
+Encoding.default_external = Encoding::UTF_8
+Encoding.default_internal = Encoding::UTF_8
 
 require 'yaml'
 require 'date'
@@ -92,7 +96,7 @@ class UpdateAlerts
     end
 
     def num_remote_branches_containing branch
-      git_cmd("branch -r --contains #{branch}").split("\n").count
+      git_cmd("branch -r --contains #{branch} --no-color").split("\n").count
     end
 
     def filter_current_asterisk branch
