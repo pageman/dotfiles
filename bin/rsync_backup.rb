@@ -14,7 +14,7 @@ class Settings
     "/home/joel/rsync/books-papers/"
   end
   def source_directory
-    "~/Reference/Shelf/"
+    "/Users/joel/Reference/Shelf/"
   end
 end
 
