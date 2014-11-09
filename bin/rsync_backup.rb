@@ -11,10 +11,10 @@ class Settings
     "joel@private.joelmccracken.com"
   end
   def target_directory
-    "/home/joel/rsync/books-papers/"
+    "/home/joel/rsync/"
   end
   def source_directory
-    "/Users/joel/Reference/Shelf/"
+    "/Users/joel/Sync/"
   end
 end
 
