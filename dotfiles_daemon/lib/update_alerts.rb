@@ -114,6 +114,10 @@ class UpdateAlerts
        at: "~/vagrant-environment/apangea/"
      },
      {
+       type: :git,
+       at: "~/Dropbox/Reference"
+     },
+     {
        type: :incoming,
        at: "~/Inbox"
      },
