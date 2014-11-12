@@ -375,7 +375,7 @@ http://distinctplace.com/infrastructure/2013/08/04/secure-data-bag-items-with-ch
    is required for librarian-chef.
 ** Bootstrap
    The bootstrap cookbook does early/high level bootstrapping
-   work. This work needs to happen prior to other scripts being run
+   work. This work needs to happen prior to other scripts being run.
 
    the metadata file:
    #+BEGIN_SRC ruby :tangle ./site-cookbooks/bootstrap/metadata.rb
@@ -435,8 +435,8 @@ http://distinctplace.com/infrastructure/2013/08/04/secure-data-bag-items-with-ch
          git reset --hard HEAD
        EOC
      end
-
    #+END_SRC
+
 
    the SecretSource library:
    #+BEGIN_SRC ruby :noweb yes :tangle ./site-cookbooks/bootstrap/libraries/secret_source.rb
