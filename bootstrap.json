@@ -1,5 +1,6 @@
 {
   "run_list": [
-    "recipe[bootstrap::default]"
+    "recipe[bootstrap::xcode]",
+    "recipe[bootstrap::make_dotfiles_git_repo]"
   ]
 }

@@ -392,9 +392,10 @@ http://distinctplace.com/infrastructure/2013/08/04/secure-data-bag-items-with-ch
 
    #+END_SRC
 
+   There are two recipes. One installs xcode, the other makes this
+   cloned directory a git repository.
 
-  the default recipe:
-   #+BEGIN_SRC ruby :tangle ./site-cookbooks/bootstrap/recipes/default.rb
+   #+BEGIN_SRC ruby :tangle ./site-cookbooks/bootstrap/recipes/xcode.rb
      #
      # install xcode
      #
@@ -413,7 +414,9 @@ http://distinctplace.com/infrastructure/2013/08/04/secure-data-bag-items-with-ch
          app "Command Line Tools (OS X 10.9)"
        end
      end
+   #+END_SRC
 
+   #+BEGIN_SRC ruby :tangle ./site-cookbooks/bootstrap/recipes/make_dotfiles_git_repo.rb
      # assume we now have git
      # adapted from
      # http://stackoverflow.com/questions/2411031/how-do-i-clone-into-a-non-empty-directory
