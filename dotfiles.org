@@ -1302,6 +1302,7 @@ integration test:
 * Miscellaneous
 ** ~.gitignore~
 #+BEGIN_SRC fundamental :tangle ./.gitignore
+
   sprout-wrap/
   cookbooks/
 
@@ -1316,6 +1317,11 @@ integration test:
   cookbooks
   tmp
   chef-client-running.pid
+
+  dotfiles_daemon/log
+  Backup/.data
+  Backup/log
+  Backup/.tmp
 #+END_SRC
 * Development
 ** Requirements
