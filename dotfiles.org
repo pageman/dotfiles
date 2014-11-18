@@ -356,6 +356,7 @@ http://distinctplace.com/infrastructure/2013/08/04/secure-data-bag-items-with-ch
     ln -s "$EDB_SECRET" ./encrypted_data_bag_secret || true
   fi
 
+  sudo /opt/chef/bin/chef-solo -c solo.rb -j sprout.json $@
   /opt/chef/bin/chef-solo -c solo.rb -j solo.json $@
   chown -R $SUDO_USER:staff ./*
 #+END_SRC
@@ -708,7 +709,7 @@ The file ~site-cookbooks/personal/providers/firefox_profile.rb~:
       converge_by "set profile ownership to #{ownership}" do
         cmd = <<-FX_CMD.strip
           cd #{new_resource.location}
-          sudo chown -R #{ownership} *
+          chown -R #{ownership} *
         FX_CMD
 
         shell_out!(cmd, user: new_resource.owner)
@@ -872,9 +873,7 @@ default['username'] = 'joel'
 
   depends "bootstrap"
   depends "shadow_directory"
-  depends "sprout-homebrew"
   depends "homebrew"
-  depends "sprout-osx-apps"
 #+END_SRC
 
 ** Shadow Directory
@@ -986,7 +985,7 @@ default['username'] = 'joel'
       ownership = [new_resource.owner, new_resource.group].compact.join ":"
       converge_by "set profile ownership to #{ownership}" do
         cmd = <<-FX_CMD.strip
-          sudo chown -R #{ownership} #{new_resource.with_path}
+          chown -R #{ownership} #{new_resource.with_path}
         FX_CMD
 
         shell_out!(cmd, user: new_resource.owner)
@@ -1188,11 +1187,6 @@ used in the ~personal~ recipe.
   {
     "firefox_bin": "~/Applications/Firefox.app/Contents/MacOS/firefox-bin",
     "run_list": [
-      "recipe[sprout-base]",
-      "recipe[sprout-base::bash_it]",
-      "recipe[sprout-base::homebrew]",
-      "recipe[sprout-homebrew]",
-      "recipe[sprout-homebrew::cask]",
       "recipe[personal]"
     ]
   }
