@@ -227,7 +227,6 @@ VBoxManage controlvm mavericks-test poweroff
 *** TODO write backup script
 **** should send to s3
 ** Nice-to-have
-*** TODO automatically set up launchd script for omnifocus syncing
 *** TODO add tests for:
 **** Firefox (esp connect to mozrepl, etc)
 **** standard ruby installation
