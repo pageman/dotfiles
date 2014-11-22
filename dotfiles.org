@@ -1294,6 +1294,9 @@ integration test:
 
   puts "disable sudo nopassword."
   ssh_do "echo testuser | sudo -S dotfiles/bin/toggle-sudo-nopassword off"
+
+  puts "run tests"
+  ssh_do "ruby dotfiles/test/*"
 #+END_SRC
 * Miscellaneous
 ** ~.gitignore~

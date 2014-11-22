@@ -65,3 +65,6 @@ ssh_do "cd dotfiles; echo testuser | sudo -S bash -c \"EDB_SECRET=~/encrypted_da
 
 puts "disable sudo nopassword."
 ssh_do "echo testuser | sudo -S dotfiles/bin/toggle-sudo-nopassword off"
+
+puts "run tests"
+ssh_do "ruby dotfiles/test/*"
