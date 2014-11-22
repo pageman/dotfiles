@@ -61,7 +61,7 @@ puts "run chef bootstrap."
 ssh_do "cd dotfiles; echo testuser | sudo -S bash -c \"EDB_SECRET=~/encrypted_data_bag_secret bin/omnibus-env bin/bootstrap.sh\""
 
 puts "run chef."
-ssh_do "cd dotfiles; echo testuser | sudo -S bash -c \"EDB_SECRET=~/encrypted_data_bag_secret INTEGRATION_TEST=true bin/omnibus-env bin/run-chef.sh\""
+ssh_do "cd dotfiles; echo testuser | sudo -S bash -c \"EDB_SECRET=~/encrypted_data_bag_secret INTEGRATION_TEST=true bin/omnibus-env bin/converge\""
 
 puts "disable sudo nopassword."
 ssh_do "echo testuser | sudo -S dotfiles/bin/toggle-sudo-nopassword off"

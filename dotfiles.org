@@ -80,7 +80,7 @@ go anywhere, and can thus be specified via the environment variable
 ** Run Chef
    The following command runs chef and converges the system.
   #+BEGIN_SRC
-   EDB_SECRET=~/encrypted_data_bag_secret bin/run-chef.sh
+   EDB_SECRET=~/encrypted_data_bag_secret bin/converge
   #+END_SRC
 ** Final Steps
    Assuming all of the above steps worked correctly, the system should
@@ -282,7 +282,7 @@ The README is a starting point, so some absolute basics are provided.
     installer.
   - ~./bin/bootstrap.sh~ runs special bootstrap recipes.
   - ~./bin/get-cookbooks.sh~ gets cookbooks managed by librarian-chef.
-  - ~./bin/run-chef.sh~ runs chef and converges the system.
+  - ~./bin/converge~ runs chef and converges the system.
 
 ** omnibus-env script
    This script acts as a wrapper for running chef commands. It sets up
@@ -348,7 +348,7 @@ http://distinctplace.com/infrastructure/2013/08/04/secure-data-bag-items-with-ch
   /opt/chef/embedded/bin/librarian-chef install --verbose
 #+END_SRC
 ** Converge the system
-#+BEGIN_SRC fundamental :tangle ./bin/run-chef.sh :shebang "#!/bin/bash" :noweb yes
+#+BEGIN_SRC fundamental :tangle ./bin/converge :shebang "#!/bin/bash" :noweb yes
   set -e
 
   if [[ "$EDB_SECRET" != "" && -f "$EDB_SECRET" ]]; then
@@ -1290,7 +1290,7 @@ integration test:
   ssh_do "cd dotfiles; echo testuser | sudo -S bash -c \"EDB_SECRET=~/encrypted_data_bag_secret bin/omnibus-env bin/bootstrap.sh\""
 
   puts "run chef."
-  ssh_do "cd dotfiles; echo testuser | sudo -S bash -c \"EDB_SECRET=~/encrypted_data_bag_secret INTEGRATION_TEST=true bin/omnibus-env bin/run-chef.sh\""
+  ssh_do "cd dotfiles; echo testuser | sudo -S bash -c \"EDB_SECRET=~/encrypted_data_bag_secret INTEGRATION_TEST=true bin/omnibus-env bin/converge\""
 
   puts "disable sudo nopassword."
   ssh_do "echo testuser | sudo -S dotfiles/bin/toggle-sudo-nopassword off"
