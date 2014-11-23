@@ -19,7 +19,7 @@ if [ -d "$dotfiles_dir" ]; then
     exit 1
 fi
 
-tmpdir=`mktemp -d /tmp/install-dotfiles.XXXX`
+tmpdir=`mktemp -d /tmp/download-dotfiles.XXXX`
 
 debug $tmpdir
 

@@ -23,13 +23,13 @@
   5. Restore (other?) private data (???).
 * Installation and Setup
 ** Acquire the Project Code
-To acquire and easily install this project:
+To download this project:
 #+BEGIN_SRC
-  curl -LO https://raw.githubusercontent.com/joelmccracken/dotfiles/master/install.sh
-  bash install.sh
+  curl -LO https://raw.githubusercontent.com/joelmccracken/dotfiles/master/download.sh
+  bash download.sh
 #+END_SRC
 The source for that install script:
-#+BEGIN_SRC sh :tangle ./install.sh :shebang "#!/bin/bash" :noweb yes
+#+BEGIN_SRC sh :tangle ./download.sh :shebang "#!/bin/bash" :noweb yes
   set -e
 
 
@@ -49,7 +49,7 @@ The source for that install script:
       exit 1
   fi
 
-  tmpdir=`mktemp -d /tmp/install-dotfiles.XXXX`
+  tmpdir=`mktemp -d /tmp/download-dotfiles.XXXX`
 
   debug $tmpdir
 
