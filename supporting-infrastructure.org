@@ -1,0 +1,206 @@
+* Supporting Infrastructure
+  There is quite a bit of infrastructure around this project. Most of it
+  has to do with the frustrations of dealing with an OS X VM.
+** Preparing a Mavericks VM for Testing
+I would love to make this entire process automated, but I don't think
+that is possible.
+*** Creating a bootable ISO
+These instructions come from [[http://thezinx.com/misc/trend/create-bootable-dmg-iso-mavericks-app/][here]], but I am copying them below in case
+that source ever goes away.
+
+Before all this, you must acquire the "Install OS X Mavericks.app"
+installer.
+#+BEGIN_SRC
+# Mount the installer image
+hdiutil attach /Applications/Install\ OS\ X\ Mavericks.app/Contents/SharedSupport/InstallESD.dmg -noverify -nobrowse -mountpoint /Volumes/install_app
+
+# Convert the boot image to a sparse bundle
+hdiutil convert /Volumes/install_app/BaseSystem.dmg -format UDSP -o /tmp/Mavericks
+
+# Increase the sparse bundle capacity to accommodate the packages
+hdiutil resize -size 8g /tmp/Mavericks.sparseimage
+
+# Mount the sparse bundle for package addition
+hdiutil attach /tmp/Mavericks.sparseimage -noverify -nobrowse -mountpoint /Volumes/install_build
+
+# Remove Package link and replace with actual files
+rm /Volumes/install_build/System/Installation/Packages
+cp -rp /Volumes/install_app/Packages /Volumes/install_build/System/Installation/
+
+# Unmount the installer image
+hdiutil detach /Volumes/install_app
+
+# Unmount the sparse bundle
+hdiutil detach /Volumes/install_build
+
+# Resize the partition in the sparse bundle to remove any free space
+hdiutil resize -size `hdiutil resize -limits /tmp/Mavericks.sparseimage | tail -n 1 | awk '{ print $1 }'`b /tmp/Mavericks.sparseimage
+
+# Convert the sparse bundle to ISO/CD master
+hdiutil convert /tmp/Mavericks.sparseimage -format UDTO -o /tmp/Mavericks
+
+# Remove the sparse bundle
+rm /tmp/Mavericks.sparseimage
+
+# Rename the ISO and move it to the desktop
+mv /tmp/Mavericks.cdr ~/Desktop/Mavericks.iso
+#+END_SRC
+*** Creating a new VM in Virtualbox
+There is a [[https://www.youtube.com/watch?v=3kKDf-E5AiQ][source on youtube]], but the idea is: In Virtualbox, specify
+a new VM with OS X 10.9/Mavericks as the type. Use all the defaults it
+provides you, at least at first. Once you have it working, you may
+want to tweak ram, etc.
+
+Go through the setup process, etc. Give the user account a
+username/password like "testuser"/"testuser".
+
+Finally, log into the VM desktop. Set your keyboard if it prompts you,
+open terminal, and run: ~systemsetup -setremotelogin on~.
+
+This command enables ssh: we can now ssh into this VM!
+*** Export the VM
+At this point, you should have an out-of-the-box OS VM that boots
+to Mavericks desktop and allows you to ssh into it. Export it so you
+can re-import it if something goes wrong.
+
+You can export with the UI, but hey, lets do it with the VBoxManage
+command:
+#+BEGIN_SRC
+VBoxManage export mavericks-test -o ~/Documents/new/mavericks-base-ssh-enabled.ovf
+#+END_SRC
+
+The resulting files may be bundled together like so:
+
+#+BEGIN_SRC
+tar cvf mavericks-base-ssh-enabled.ova mavericks-base-ssh-enabled.ovf mavericks-base-ssh-enabled-disk1.vmdk
+#+END_SRC
+This creates an ova file out of the ovf and the vmdk files. Notice,
+the ovf file must come first in the list.
+
+*** Re-importing the VM
+If you ever need to re-import the vm image we just created, here's how:
+
+First, run this the command with --dry-run
+#+BEGIN_SRC
+VBoxManage import ~/Documents/mavericks-base-ssh-enabled.ova --dry-run
+#+END_SRC
+
+If all is well with what it detected, then run it again without
+~--dry-run~. See the VirtualBox documentation about VBoxManage.
+*** Delete a VM
+If you need to delete a VM currently in VirtualBox:
+#+BEGIN_SRC
+VBoxManage unregistervm mavericks-test --delete
+#+END_SRC
+
+*** Port Forwarding for SSH
+In order to access this VM over ssh, we need to set up port
+forwarding. Running this from the host will enable that:
+
+#+BEGIN_SRC
+VBoxManage modifyvm mavericks-test --natpf1 "guestssh,tcp,,3333,,22"
+#+END_SRC
+
+Now you can ssh into the vm with:
+
+#+BEGIN_SRC
+ssh -p 3333 testuser@localhost
+#+END_SRC
+
+After you do this a few times, you might run into host key
+problems. Just do this:
+
+ #+BEGIN_SRC
+ssh -i ~/dotfiles/misc/vagrant_private_key -o "StrictHostKeyChecking no" -o "UserKnownHostsFile /dev/null" -o "PasswordAuthentication yes" -p 3333 testuser@localhost
+ #+END_SRC
+
+At some point in the future I would like to make this easier, maybe
+with a settings file.
+
+copying a file:
+
+#+BEGIN_SRC
+scp -o "StrictHostKeyChecking no" -o "UserKnownHostsFile /dev/null" -o "PasswordAuthentication yes" -P 3333 ~/var/secrets/encrypted_data_bag_secret testuser@localhost:~
+#+END_SRC
+
+*** Starting and stopping a vm
+#+BEGIN_SRC
+VBoxManage startvm mavericks-test
+#+END_SRC
+
+#+BEGIN_SRC
+VBoxManage controlvm mavericks-test poweroff
+#+END_SRC
+** Integration Testing VM Setup
+integration test:
+#+BEGIN_SRC ruby :tangle ./integration-test.rb :shebang "#!/usr/bin/env ruby"
+
+  def use_branch
+    ARGV[0] || "master"
+  end
+
+  def ssh_opts
+    %Q{ -i ./misc/vagrant_private_key -o "StrictHostKeyChecking no" \
+        -o "UserKnownHostsFile /dev/null" \
+        -o "PasswordAuthentication yes"}
+  end
+
+  def ssh_cmd
+    %Q{ssh #{ssh_opts} -p 3333 testuser@localhost}
+  end
+
+  def ssh_do cmd
+    cmd = "#{ssh_cmd} '#{cmd}'"
+    puts "running #{cmd}"
+    system cmd
+  end
+
+  puts "stop old vm if it is started."
+  system "VBoxManage controlvm mavericks-test poweroff"
+
+  puts "delete old vm if it exists."
+  system "VBoxManage unregistervm mavericks-test --delete"
+
+  puts "import VM..."
+  system "VBoxManage import ~/Documents/mavericks-base-ssh-enabled.ova"
+
+  puts "set up NAT for ssh."
+  system "VBoxManage modifyvm mavericks-test --natpf1 'guestssh,tcp,,3333,,22'"
+
+  puts "start VM."
+  system "VBoxManage startvm mavericks-test"
+
+  puts "Sleep for 10 seconds while VM boots.."
+  sleep 10
+
+  # change the permissions for the vm private key
+  # required for ssh/scp below
+  system "chmod 0600 misc/vagrant_private_key"
+
+  puts "copy secret key to vm."
+  system "scp #{ssh_opts} -P 3333 ~/var/secrets/encrypted_data_bag_secret testuser@localhost:~"
+
+  puts "get install.sh."
+  ssh_do "curl -LO https://raw.githubusercontent.com/joelmccracken/dotfiles/#{use_branch}/install.sh"
+
+  puts "run install.sh."
+  ssh_do "bash install.sh #{use_branch}"
+
+  puts "run chef installer."
+  ssh_do "cd ~/dotfiles; DOTFILES_TEST=true bin/omnibus-env ./bin/install-chef-standalone.sh"
+
+  puts "enable sudo nopassword."
+  ssh_do "echo testuser | sudo -S dotfiles/bin/toggle-sudo-nopassword on"
+
+  puts "run chef bootstrap."
+  ssh_do "cd dotfiles; echo testuser | sudo -S bash -c \"EDB_SECRET=~/encrypted_data_bag_secret bin/omnibus-env bin/bootstrap.sh\""
+
+  puts "run chef."
+  ssh_do "cd dotfiles; echo testuser | sudo -S bash -c \"EDB_SECRET=~/encrypted_data_bag_secret INTEGRATION_TEST=true bin/omnibus-env bin/converge\""
+
+  puts "disable sudo nopassword."
+  ssh_do "echo testuser | sudo -S dotfiles/bin/toggle-sudo-nopassword off"
+
+  puts "run tests"
+  ssh_do "ruby dotfiles/test/*"
+#+END_SRC
