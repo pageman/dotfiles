@@ -58,6 +58,7 @@ def handle_existing_replace
   end
 
   converge_by "Remove #{new_resource.replace_path} to make way for link to #{new_resource.with_path}" do
+    require 'pry'; binding.pry
     ::FileUtils.rm_r(current_resource.replace_path, :secure => true)
   end
 
