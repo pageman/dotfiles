@@ -204,3 +204,11 @@ integration test:
   puts "run tests"
   ssh_do "ruby dotfiles/test/*"
 #+END_SRC
+** notes from yosemite vm
+- http://www.engadget.com/discuss/how-to-install-os-x-yosemite-inside-virtualbox-1rey/
+- instead of hdiutil unmount, use hdiutil detach
+- on machine, ~sudo systemsetup -setremotelogin on~.
+- ~VBoxManage modifyvm yosemite-test --natpf1 "guestssh,tcp,,3333,,22"~
+- ~VBoxManage export yosemite-test -o ~/Documents/yosemite-base-ssh-enabled.ovf~
+- ~cat cvf yosemite-base-ssh-enabled.ova yosemite-base-ssh-enabled.ovf yosemite-base-ssh-enabled-disk1.vmdk~
+
