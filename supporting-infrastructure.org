@@ -208,7 +208,10 @@ integration test:
 - http://www.engadget.com/discuss/how-to-install-os-x-yosemite-inside-virtualbox-1rey/
 - instead of hdiutil unmount, use hdiutil detach
 - on machine, ~sudo systemsetup -setremotelogin on~.
+- run keyboard setup assistant so do not need to do in the future
+- once machine is stopped, remove virtual disk from machine
+  configuration
 - ~VBoxManage modifyvm yosemite-test --natpf1 "guestssh,tcp,,3333,,22"~
 - ~VBoxManage export yosemite-test -o ~/Documents/yosemite-base-ssh-enabled.ovf~
-- ~cat cvf yosemite-base-ssh-enabled.ova yosemite-base-ssh-enabled.ovf yosemite-base-ssh-enabled-disk1.vmdk~
+- ~tar cvf yosemite-base-ssh-enabled.ova yosemite-base-ssh-enabled.ovf yosemite-base-ssh-enabled-disk1.vmdk~
 
