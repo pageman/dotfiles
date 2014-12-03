@@ -3,7 +3,7 @@
 if [ "$DOTFILES_TEST" == "true" ];
 then
     function sudo_fn {
-        echo testuser | sudo -S "$@"
+        echo vagrant | sudo -S "$@"
     }
 else
     function sudo_fn {
