@@ -82,8 +82,10 @@ namespace :vm do
       snapshot "after-converge"
     end
 
-    desc "run chef & converge the VM image"
-    task :converge => [:download_dotfiles, :install_chef, :run_bootstrap, :run_converge_script]
+
+    dependent_tasks = [:download_dotfiles, :install_chef, :run_bootstrap, :run_converge_script]
+    desc "run chef & converge the VM image (runs #{dependent_tasks})"
+    task :converge => dependent_tasks
 
     desc "run tests in image"
     task :test do
