@@ -5,18 +5,15 @@
 
 # this version of xcode tools is for yosemite
 
-if node[:platform] == "mac_os_x" && node[:platform_version] =~ /10\.10\.\d+/
-  secret = SecretSource.autofind
-  xcode_url = Chef::EncryptedDataBagItem.load("default", "default", secret)["yosemite_xcode_url"]
-
-  dmg_package "XCode Tools" do
-    source xcode_url
-    action :install
-    type 'pkg'
-    accept_eula true
-    volumes_dir "Command\ Line\ Developer\ Tools"
-    app "Command Line Tools (OS X 10.10)"
-  end
+secret = SecretSource.autofind
+xcode_url = Chef::EncryptedDataBagItem.load("default", "default", secret)["yosemite_xcode_url"]
+dmg_package "XCode Tools" do
+  source xcode_url
+  action :install
+  type 'pkg'
+  accept_eula true
+  volumes_dir "Command\ Line\ Developer\ Tools"
+  app "Command Line Tools (OS X 10.10)"
 end
 
 # assume we now have git
