@@ -1,7 +1,6 @@
 
 {
   "run_list": [
-    "recipe[sprout-base]",
     "recipe[sprout-base::bash_it]"
   ]
 }
