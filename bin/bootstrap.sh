@@ -7,7 +7,8 @@ if [[ "$EDB_SECRET" != "" && -f "$EDB_SECRET" ]]; then
 fi
 
 /opt/chef/bin/chef-solo -c solo.rb -j bootstrap.json $@
-# chown -R $SUDO_USER:staff ./*
+
+chown -R $SUDO_USER /opt
 
 /opt/chef/embedded/bin/gem install librarian-chef
 /opt/chef/embedded/bin/gem install knife-solo
