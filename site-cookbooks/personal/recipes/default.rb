@@ -79,6 +79,8 @@ gem_package "backup" do
 end
 
 
+execute "chown -R #{node[:current_user]}:#{node[:current_group]} /opt/homebrew-cask"
+
 homebrew_cask "omnifocus"
 homebrew_cask "racket"
 
