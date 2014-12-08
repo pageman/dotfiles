@@ -2,8 +2,6 @@
 {
   "run_list": [
     "recipe[sprout-base]",
-    "recipe[sprout-base::bash_it]",
-    "recipe[sprout-homebrew]",
-    "recipe[sprout-homebrew::cask]"
+    "recipe[sprout-base::bash_it]"
   ]
 }

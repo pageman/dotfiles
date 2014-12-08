@@ -1,0 +1,7 @@
+
+{
+  "run_list": [
+    "recipe[sprout-homebrew]",
+    "recipe[sprout-homebrew::cask]"
+  ]
+}
