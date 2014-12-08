@@ -78,14 +78,15 @@ gem_package "backup" do
   version '4.0.4'
 end
 
-include_recipe "sprout-osx-apps::dropbox"
+
+homebrew_cask "omnifocus"
+homebrew_cask "racket"
+
 include_recipe "sprout-osx-apps::evernote"
 include_recipe "sprout-osx-apps::emacs"
 include_recipe "sprout-osx-apps::firefox"
 include_recipe "sprout-osx-apps::flux"
 
-homebrew_cask "omnifocus"
-homebrew_cask "racket"
 
 unless ENV["INTEGRATION_TEST"] == "true"
   include_recipe "sprout-osx-apps::virtualbox"
