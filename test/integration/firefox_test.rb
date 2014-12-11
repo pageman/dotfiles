@@ -15,7 +15,3 @@ describe "firefox" do
     end
   end
 end
-
-def dir_exists? dir
-  Dir.exists? File.expand_path(dir)
-end
