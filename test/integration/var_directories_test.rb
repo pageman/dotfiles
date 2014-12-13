@@ -1,6 +1,4 @@
-
-require 'minitest/autorun'
-require 'minitest/pride'
+require_relative './test_helper'
 
 describe "directories" do
   it "has a ~/var directory" do
@@ -22,8 +20,4 @@ describe "apps" do
   it "has firefox" do
     assert dir_exists?("/Applications/Firefox.app")
   end
-end
-
-def dir_exists? dir
-  Dir.exists? File.expand_path(dir)
 end
