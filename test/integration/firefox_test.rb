@@ -1,4 +1,6 @@
 require_relative './test_helper'
+MOZREPL_PORT = 4242
+
 
 describe "firefox" do
   it "runs firefox & can connect to mozrepl" do
@@ -6,7 +8,7 @@ describe "firefox" do
     sleep 5
     begin
       require 'socket'
-      tcp = TCPSocket.new 'localhost', 4243
+      tcp = TCPSocket.new 'localhost', MOZREPL_PORT
       read_ready, write_ready = IO.select([tcp], [], [], 5)
       read_ready.first.gets # move past newline
       read_ready.first.gets.must_match /MozRepl/
