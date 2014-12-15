@@ -7,6 +7,6 @@ if [[ "$EDB_SECRET" != "" && -f "$EDB_SECRET" ]]; then
 fi
 
 # hack to get around this library requiring sudo
-SUDO_USER=vagrant /opt/chef/bin/chef-solo -c solo.rb -j sprout.json $@
+SUDO_USER=fake-fake-fake /opt/chef/bin/chef-solo -c solo.rb -j sprout.json $@
 /opt/chef/bin/chef-solo -c solo.rb -j sprout2.json $@
 /opt/chef/bin/chef-solo -c solo.rb -j solo.json $@
