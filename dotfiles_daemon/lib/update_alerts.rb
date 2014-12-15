@@ -115,7 +115,7 @@ class UpdateAlerts
      },
      {
        type: :git,
-       at: "~/Dropbox/Reference"
+       at: "~/Reference"
      },
      {
        type: :incoming,
