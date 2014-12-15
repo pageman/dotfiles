@@ -2,7 +2,7 @@ require_relative './test_helper'
 
 describe "firefox" do
   it "runs firefox & can connect to mozrepl" do
-    pid = spawn(*%W{/Applications/Firefox.app/Contents/MacOS/firefox -P Personal})
+    pid = spawn(*%W{/Applications/Firefox.app/Contents/MacOS/firefox -P Testing})
     sleep 5
     begin
       require 'socket'
