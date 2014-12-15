@@ -136,4 +136,27 @@ personal_firefox_profile "Personal" do
 
 end
 
+personal_firefox_profile "Testing" do
+  owner node[:current_user]
+  group "staff"
+
+  location File.expand_path("~/var/FirefoxProfiles/Testing")
+
+  extensions ["mozrepl-1.1.2-fx.xpi",
+              "firebug-addon-1843-latest.xpi",
+              "lastpass-addon-8542-latest.xpi",
+              "pinboard.xpi",
+              "pocket.xpi"
+             ].map &expand_file
+
+  prefs ['user_pref("extensions.mozrepl.autoStart", true);',
+         #lastpass
+         'user_pref("extensions.lastpass.ffhasloggedinsuccessfully", true);',
+         'user_pref("extensions.lastpass.rememberPassword", true);',
+         'user_pref("extensions.lastpass.rememberUsername", true);',
+         lastpass_encoded_pw,
+         '"user_pref("extensions.lastpass.loginusers", "mccracken.joel%40gmail.com")',
+        ]
+end
+
 include_recipe "personal::bash_it_symlinks"
