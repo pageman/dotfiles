@@ -17,7 +17,4 @@ describe "apps" do
     assert dir_exists?("/Applications/Emacs.app")
   end
 
-  it "has firefox" do
-    assert dir_exists?("/Applications/Firefox.app")
-  end
 end

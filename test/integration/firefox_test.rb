@@ -14,4 +14,7 @@ describe "firefox" do
       Process.kill "KILL", pid
     end
   end
+  it "has firefox" do
+    assert dir_exists?("/Applications/Firefox.app")
+  end
 end
