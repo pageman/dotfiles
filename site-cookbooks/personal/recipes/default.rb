@@ -71,7 +71,7 @@ package "ispell"
 # hack to get gem backup to install
 execute "symlink gcc to gcc-4.2" do
   command "sudo ln -s /usr/bin/gcc /usr/bin/gcc-4.2"
-  not_if "test -e /usr/bin/gcc-4.2'"
+  not_if "test -e /usr/bin/gcc-4.2"
 end
 
 gem_package "backup" do
