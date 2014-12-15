@@ -1,3 +1,5 @@
+require 'rake/testtask'
+
 Dir["lib/tasks/*.rb"].each do |f|
   require_relative f
 end
@@ -15,5 +17,20 @@ task :serve => :tangle do
   web.start
 end
 
+namespace :test do
+  Rake::TestTask.new do |t|
+    t.name = :all
+    t.test_files = FileList['test/**/*_test.rb']
+  end
+
+  task :matching do
+    raise "must provide a name=/regex/" unless ENV['name']
+    system "ruby -Ilib:test test/**/*_test.rb name=#{ENV['name']}"
+  end
+end
+
+# desc "runs tests. TEST=<path> to run a file, regex=/regex/ to match test names"
+# task :test do
+# end
 
 task :default => :tangle
