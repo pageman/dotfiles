@@ -34,6 +34,11 @@ namespace :vm do
       system ssh_cmd
     end
 
+    desc "refresh dotfiles from the server on current vm"
+    task :refresh_dotfiles do
+      ssh_do "cd dotfiles; git fetch; git reset --hard origin/master"
+    end
+
     desc "restore to a previous snapshot; requires a 'snapshot_name=value' parameter"
     task :restore do
       name = ENV['snapshot_name']
