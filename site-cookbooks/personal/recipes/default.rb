@@ -78,6 +78,7 @@ gem_package "backup" do
   version '4.0.4'
 end
 
+gem_package "pry"
 
 execute "chown -R #{node[:current_user]}:#{node[:current_group]} /opt/homebrew-cask"
 
