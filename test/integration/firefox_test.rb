@@ -1,6 +1,6 @@
 require_relative './test_helper'
 MOZREPL_PORT = 4242
-FX_LOCATION = File.expand_path "~Applications/Firefox.app"
+FX_LOCATION = File.expand_path "~/Applications/Firefox.app/Contents/MacOS/firefox"
 
 describe "firefox" do
   it "runs firefox & can connect to mozrepl" do
