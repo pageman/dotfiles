@@ -29,9 +29,13 @@ namespace :vm do
     end
 
 
-    desc "open a ssh session on the image"
+    desc "open a ssh session on the image, or run a command with cmd=<val>"
     task :ssh do
-      system ssh_cmd
+      if ENV['cmd']
+        ssh_do ENV['cmd']
+      else
+        system ssh_cmd
+      end
     end
 
     desc "refresh dotfiles from the server on current vm"
