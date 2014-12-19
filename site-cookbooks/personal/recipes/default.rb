@@ -76,9 +76,12 @@ end
 
 gem_package "backup" do
   version '4.0.4'
+  gem_binary "/usr/local/Cellar/ruby20/2.0.0-p481/bin/gem"
 end
 
-gem_package "pry"
+gem_package "pry" do
+  gem_binary "/usr/local/Cellar/ruby20/2.0.0-p481/bin/gem"
+end
 
 execute "chown -R #{node[:current_user]}:#{node[:current_group]} /opt/homebrew-cask"
 
