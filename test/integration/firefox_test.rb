@@ -1,10 +1,10 @@
 require_relative './test_helper'
 MOZREPL_PORT = 4242
-
+FX_LOCATION = File.expand_path "~Applications/Firefox.app"
 
 describe "firefox" do
   it "runs firefox & can connect to mozrepl" do
-    pid = spawn(*%W{/Applications/Firefox.app/Contents/MacOS/firefox -P Testing})
+    pid = spawn(*%W{#{FX_LOCATION} -P Testing})
     sleep 5
     begin
       require 'socket'
@@ -17,6 +17,6 @@ describe "firefox" do
     end
   end
   it "has firefox" do
-    assert dir_exists?("/Applications/Firefox.app")
+    assert dir_exists?(FX_LOCATION)
   end
 end
