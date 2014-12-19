@@ -94,7 +94,7 @@ namespace :vm do
 
     desc "run tests in image"
     task :test do
-      ssh_do "ruby dotfiles/test/*"
+      ssh_do "cd dotfiles; rake test:all"
     end
 
     task :full_rerun => [:destroy, :import, :start, :converge, :test]
