@@ -17,6 +17,6 @@ describe "firefox" do
     end
   end
   it "has firefox" do
-    assert dir_exists?(FX_LOCATION)
+    assert File.exists?(FX_LOCATION)
   end
 end
