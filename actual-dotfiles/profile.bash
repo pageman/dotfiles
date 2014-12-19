@@ -12,7 +12,7 @@ export PATH="/Users/joel/.cask/bin:$PATH"
 export PATH="/Users/joel/Dropbox/Projects/emacs-js/emsdk_portable:/Users/joel/Dropbox/Projects/emacs-js/emsdk_portable/clang/3.2_64bit/bin:/Users/joel/Dropbox/Projects/emacs-js/emsdk_portable/node/0.10.18_64bit /bin:/Users/joel/Dropbox/Projects/emacs-js/emsdk_portable/emscripten/1.7.1:$PATH"
 
 # export PATH="/Users/joel/.rvm/gems/ruby-1.9.3-p327-falcon/bin:$PATH"
-export PATH="/usr/local/Cellar/ruby20/2.0.0-p481/bin:$PATH"
+# export PATH="/usr/local/Cellar/ruby20/2.0.0-p481/bin:$PATH"
 
 export GIT_EDITOR='emacsclient -s server'
 export EDITOR=$GIT_EDITOR
