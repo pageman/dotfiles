@@ -141,7 +141,7 @@ namespace :vm do
     end
 
     def ssh_do command_string
-      command = "#{ssh_cmd} '#{command_string}'"
+      command = "#{ssh_cmd} \"bash -l -c '#{command_string}'\""
       puts "running #{command}"
       cmd command
     end
