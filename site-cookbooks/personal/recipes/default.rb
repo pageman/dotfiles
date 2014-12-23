@@ -192,3 +192,28 @@ personal_firefox_profile "Testing" do
 end
 
 include_recipe "personal::bash_it_symlinks"
+
+# setup dotfiles daemon
+if true
+
+  file ::File.expand_path("~/Library/LaunchAgents/dotfiles-daemon.plist") do
+    owner node[:current_user]
+    group node[:current_group]
+    content ::File.read(::File.expand_path("~/dotfiles/lib/dotfiles-daemon.plist"))
+  end
+
+  execute "bundle dotfiles daemon gems" do
+    command "cd ~/dotfiles/dotfiles_daemon; bundle"
+  end
+
+  execute "install dotfiles daemon within lauchd" do
+    command "launchctl start  ~/Library/LaunchAgents/dotfiles-daemon.plist"
+    not_if 'launchctl list | grep dotfiles_daemon'
+  end
+
+end
+# copy to location
+# cp ~/dotfiles/lib/dotfiles-daemon.plist ~/Library/LaunchAgents/
+#
+# cd dotfiles/dotfiles_daemon; bundle
+# restore hidden files ?aws_config?
