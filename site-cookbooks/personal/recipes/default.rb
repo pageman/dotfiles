@@ -109,15 +109,39 @@ expand_file = ->(name){
 
 
 secret = SecretSource.autofind
-hashed_pw = Chef::EncryptedDataBagItem.load("default", "default", secret)["lastpass_hashed_pw"]
+data_bag_item = Chef::EncryptedDataBagItem.load("default", "default", secret)
+hashed_pw = data_bag_item["lastpass_hashed_pw"]
 lastpass_encoded_pw = %Q{user_pref("extensions.lastpass.loginpws", "mccracken.joel%40gmail.com=#{hashed_pw}");}
 
+
+
+class Chef::EncryptedDataBagItem
+  def keys
+    @enc_hash.keys
+  end
+
+  def each_encrypted_item &block
+    @enc_hash.select{ |k,v| v.is_a? Hash }.each do |k, v|
+      block.call k, self[k]
+    end
+  end
+end
+
+# write secrets directory
 file ::File.expand_path("~/var/secrets/encrypted_data_bag_secret") do
   owner node[:current_user]
   group node[:current_group]
   content SecretSource.autofind
 end
 
+
+data_bag_item.each_encrypted_item do |name, val|
+  file ::File.expand_path("~/var/secrets/#{name}") do
+    owner node[:current_user]
+    group node[:current_group]
+    content val
+  end
+end
 
 personal_firefox_profile "Personal" do
   owner node[:current_user]
