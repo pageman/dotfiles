@@ -85,7 +85,7 @@ namespace :vm do
   task :run_converge_script do
     with_no_sudo_password_required do
       puts "run chef."
-      ssh_do "cd dotfiles; bash -c \"EDB_SECRET=~/encrypted_data_bag_secret INTEGRATION_TEST=true bin/converge\""
+      ssh_do "cd dotfiles; EDB_SECRET=~/encrypted_data_bag_secret INTEGRATION_TEST=true bin/converge"
     end
     snapshot "after-converge"
   end
