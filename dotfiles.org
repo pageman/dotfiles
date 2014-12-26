@@ -226,9 +226,10 @@ http://distinctplace.com/infrastructure/2013/08/04/secure-data-bag-items-with-ch
     ln -s "$EDB_SECRET" ./encrypted_data_bag_secret || true
   fi
 
-  sudo /opt/chef/bin/chef-solo -c solo.rb -j sprout.json $@
+  # hack to get around this library requiring sudo
+  SUDO_USER=fake-fake-fake /opt/chef/bin/chef-solo -c solo.rb -j sprout.json $@
+  /opt/chef/bin/chef-solo -c solo.rb -j sprout2.json $@
   /opt/chef/bin/chef-solo -c solo.rb -j solo.json $@
-  chown -R $SUDO_USER:staff ./*
 #+END_SRC
 ** Running Tests
 #+BEGIN_SRC sh :tangle ./bin/run-tests.sh :shebang "#!/bin/bash" :noweb yes
