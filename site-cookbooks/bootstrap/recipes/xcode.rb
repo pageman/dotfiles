@@ -3,7 +3,6 @@
 # install xcode
 #
 
-# this version of xcode tools is for mavericks
 secret = SecretSource.autofind
 xcode_url = Chef::EncryptedDataBagItem.load("default", "default", secret)["yosemite_xcode_url"]
 
