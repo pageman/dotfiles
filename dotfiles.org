@@ -686,24 +686,40 @@ The file ~site-cookbooks/personal/providers/firefox_profile.rb~:
   package "git"
   package "ispell"
 
-  gem_package "backup" do
-    version '4.0.4'
+  # hack to get gem backup to install
+  execute "symlink gcc to gcc-4.2" do
+    command "sudo ln -s /usr/bin/gcc /usr/bin/gcc-4.2"
+    not_if "test -e /usr/bin/gcc-4.2"
   end
 
-  include_recipe "sprout-osx-apps::dropbox"
+  gem_package "backup" do
+    version '4.0.4'
+    gem_binary "/usr/local/bin/gem"
+  end
+
+
+  gem_package "pry" do
+    gem_binary "/usr/local/bin/gem"
+  end
+
+  gem_package "bundler" do
+    gem_binary "/usr/local/bin/gem"
+  end
+
+  execute "chown -R #{node[:current_user]}:#{node[:current_group]} /opt/homebrew-cask"
+
+  homebrew_cask "omnifocus"
+  homebrew_cask "racket"
+
   include_recipe "sprout-osx-apps::evernote"
   include_recipe "sprout-osx-apps::emacs"
   include_recipe "sprout-osx-apps::firefox"
   include_recipe "sprout-osx-apps::flux"
 
-  homebrew_cask "omnifocus"
-  homebrew_cask "racket"
-
   unless ENV["INTEGRATION_TEST"] == "true"
     include_recipe "sprout-osx-apps::virtualbox"
     include_recipe "sprout-osx-apps::vagrant"
   end
-
 #+END_SRC
 *** The Combined Recipe
 #+BEGIN_SRC ruby :noweb yes :tangle ./site-cookbooks/personal/recipes/default.rb
