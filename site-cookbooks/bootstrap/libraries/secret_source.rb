@@ -5,7 +5,6 @@
 
 class SecretSource
 
-
   def secret_file_location
     @secret_file_location ||=
       begin

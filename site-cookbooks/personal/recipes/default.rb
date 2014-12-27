@@ -79,6 +79,7 @@ gem_package "backup" do
   gem_binary "/usr/local/bin/gem"
 end
 
+
 gem_package "pry" do
   gem_binary "/usr/local/bin/gem"
 end
@@ -97,23 +98,18 @@ include_recipe "sprout-osx-apps::emacs"
 include_recipe "sprout-osx-apps::firefox"
 include_recipe "sprout-osx-apps::flux"
 
-
 unless ENV["INTEGRATION_TEST"] == "true"
   include_recipe "sprout-osx-apps::virtualbox"
   include_recipe "sprout-osx-apps::vagrant"
 end
-
 expand_file = ->(name){
   ::File.expand_path ::File.join(__FILE__, "../../files/default", name)
 }
-
 
 secret = SecretSource.autofind
 data_bag_item = Chef::EncryptedDataBagItem.load("default", "default", secret)
 hashed_pw = data_bag_item["lastpass_hashed_pw"]
 lastpass_encoded_pw = %Q{user_pref("extensions.lastpass.loginpws", "mccracken.joel%40gmail.com=#{hashed_pw}");}
-
-
 
 class Chef::EncryptedDataBagItem
   def keys
@@ -133,7 +129,6 @@ file ::File.expand_path("~/var/secrets/encrypted_data_bag_secret") do
   group node[:current_group]
   content SecretSource.autofind
 end
-
 
 data_bag_item.each_encrypted_item do |name, val|
   file ::File.expand_path("~/var/secrets/#{name}") do
@@ -165,7 +160,6 @@ personal_firefox_profile "Personal" do
          lastpass_encoded_pw,
          '"user_pref("extensions.lastpass.loginusers", "mccracken.joel%40gmail.com")',
         ]
-
 end
 
 personal_firefox_profile "Testing" do
@@ -191,11 +185,8 @@ personal_firefox_profile "Testing" do
         ]
 end
 
-include_recipe "personal::bash_it_symlinks"
-
 # setup dotfiles daemon
 if true
-
   file ::File.expand_path("~/Library/LaunchAgents/dotfiles-daemon.plist") do
     owner node[:current_user]
     group node[:current_group]
@@ -210,10 +201,7 @@ if true
     command "launchctl start  ~/Library/LaunchAgents/dotfiles-daemon.plist"
     not_if 'launchctl list | grep dotfiles_daemon'
   end
-
 end
-# copy to location
-# cp ~/dotfiles/lib/dotfiles-daemon.plist ~/Library/LaunchAgents/
-#
-# cd dotfiles/dotfiles_daemon; bundle
-# restore hidden files ?aws_config?
+
+
+include_recipe "personal::bash_it_symlinks"

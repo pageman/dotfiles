@@ -317,7 +317,6 @@ http://distinctplace.com/infrastructure/2013/08/04/secure-data-bag-items-with-ch
 
      class SecretSource
 
-
        def secret_file_location
          @secret_file_location ||=
            begin
@@ -460,17 +459,37 @@ profile.
     ::File.expand_path ::File.join(__FILE__, "../../files/default", name)
   }
 
-
   secret = SecretSource.autofind
-  hashed_pw = Chef::EncryptedDataBagItem.load("default", "default", secret)["lastpass_hashed_pw"]
+  data_bag_item = Chef::EncryptedDataBagItem.load("default", "default", secret)
+  hashed_pw = data_bag_item["lastpass_hashed_pw"]
   lastpass_encoded_pw = %Q{user_pref("extensions.lastpass.loginpws", "mccracken.joel%40gmail.com=#{hashed_pw}");}
 
+  class Chef::EncryptedDataBagItem
+    def keys
+      @enc_hash.keys
+    end
+
+    def each_encrypted_item &block
+      @enc_hash.select{ |k,v| v.is_a? Hash }.each do |k, v|
+        block.call k, self[k]
+      end
+    end
+  end
+
+  # write secrets directory
   file ::File.expand_path("~/var/secrets/encrypted_data_bag_secret") do
     owner node[:current_user]
     group node[:current_group]
     content SecretSource.autofind
   end
 
+  data_bag_item.each_encrypted_item do |name, val|
+    file ::File.expand_path("~/var/secrets/#{name}") do
+      owner node[:current_user]
+      group node[:current_group]
+      content val
+    end
+  end
 
   personal_firefox_profile "Personal" do
     owner node[:current_user]
@@ -494,8 +513,49 @@ profile.
            lastpass_encoded_pw,
            '"user_pref("extensions.lastpass.loginusers", "mccracken.joel%40gmail.com")',
           ]
-
   end
+
+  personal_firefox_profile "Testing" do
+    owner node[:current_user]
+    group "staff"
+
+    location File.expand_path("~/var/FirefoxProfiles/Testing")
+
+    extensions ["mozrepl-1.1.2-fx.xpi",
+                "firebug-addon-1843-latest.xpi",
+                "lastpass-addon-8542-latest.xpi",
+                "pinboard.xpi",
+                "pocket.xpi"
+               ].map &expand_file
+
+    prefs ['user_pref("extensions.mozrepl.autoStart", true);',
+           #lastpass
+           'user_pref("extensions.lastpass.ffhasloggedinsuccessfully", true);',
+           'user_pref("extensions.lastpass.rememberPassword", true);',
+           'user_pref("extensions.lastpass.rememberUsername", true);',
+           lastpass_encoded_pw,
+           '"user_pref("extensions.lastpass.loginusers", "mccracken.joel%40gmail.com")',
+          ]
+  end
+
+  # setup dotfiles daemon
+  if true
+    file ::File.expand_path("~/Library/LaunchAgents/dotfiles-daemon.plist") do
+      owner node[:current_user]
+      group node[:current_group]
+      content ::File.read(::File.expand_path("~/dotfiles/lib/dotfiles-daemon.plist"))
+    end
+
+    execute "bundle dotfiles daemon gems" do
+      command "cd ~/dotfiles/dotfiles_daemon; bundle"
+    end
+
+    execute "install dotfiles daemon within lauchd" do
+      command "launchctl start  ~/Library/LaunchAgents/dotfiles-daemon.plist"
+      not_if 'launchctl list | grep dotfiles_daemon'
+    end
+  end
+
 #+END_SRC
 **** Resource and Provider
 Setting up a Firefox profile required quite a bit of hacking. I want
@@ -1080,37 +1140,6 @@ used in the ~personal~ recipe.
 * Tests
 These should run on a system to test to see that it is the expected
 state.
-
-#+BEGIN_SRC ruby :tangle ./test/var_directories_test.rb
-  require 'minitest/autorun'
-  require 'minitest/pride'
-
-  describe "directories" do
-    it "has a ~/var directory" do
-      assert dir_exists?("~/var")
-    end
-    it "has a secrets directory" do
-      assert dir_exists?("~/var/secrets")
-    end
-    it "has a secrets directory" do
-      assert dir_exists?("~/var/secrets")
-    end
-  end
-
-  describe "apps" do
-    it "has emacs" do
-      assert dir_exists?("/Applications/Emacs.app")
-    end
-
-    it "has firefox" do
-      assert dir_exists?("/Applications/Firefox.app")
-    end
-  end
-
-  def dir_exists? dir
-    Dir.exists? File.expand_path(dir)
-  end
-#+END_SRC
 
 * Miscellaneous
 ** ~.gitignore~
